@@ -8,11 +8,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity
 {
     DatabaseHelper myDB;
+
+    TextView textView_AM_activeUser;
 
     EditText edit_AM_userName, edit_AM_password, edit_AM_passwordConfirm, edit_AM_firstName, edit_AM_lastName;
 
@@ -25,6 +30,8 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         myDB = new DatabaseHelper(this);
+
+        textView_AM_activeUser = (TextView)findViewById(R.id.textView_AM_activeUser);
 
         edit_AM_userName = (EditText)findViewById(R.id.edit_AM_userName);
         edit_AM_password = (EditText)findViewById(R.id.edit_AM_password);
@@ -95,6 +102,8 @@ public class MainActivity extends AppCompatActivity
                                 else
                                 {
                                     Toast.makeText(MainActivity.this, "Account Found", Toast.LENGTH_LONG).show();
+                                    textView_AM_activeUser.setText(edit_AM_userName.getText().toString());
+
                                 }
                             }
                         }
