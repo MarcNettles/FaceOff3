@@ -15,6 +15,9 @@ import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity
 {
+    String currentActiveUser = "";
+
+
     DatabaseHelper myDB;
 
     TextView textView_AM_activeUser;
@@ -109,6 +112,7 @@ public class MainActivity extends AppCompatActivity
                                 {
                                     Toast.makeText(MainActivity.this, "Account Found", Toast.LENGTH_LONG).show();
                                     textView_AM_activeUser.setText(edit_AM_userName.getText().toString());
+                                    currentActiveUser = edit_AM_userName.getText().toString();
 
                                 }
                             }
