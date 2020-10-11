@@ -78,16 +78,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
         Cursor res = db.rawQuery(selectQuery, arguments);
 
 
-        /*
-        String[] columns = {COL_USERNAME, COL_PASSWORD};
-
-        String[] arguments = {userName};
-
-        Cursor res = db.query(TABLE_NAME, columns, COL_USERNAME+" LIKE ?", arguments, null, null, null);
-        */
 
 
-        //Cursor res = db.rawQuery("select "+COL_USERNAME+", "+COL_PASSWORD+" from "+TABLE_NAME+ " where "+COL_USERNAME+" = "+ userName + " and "+COL_PASSWORD+" = " + password, null);
 
         return res;
     }

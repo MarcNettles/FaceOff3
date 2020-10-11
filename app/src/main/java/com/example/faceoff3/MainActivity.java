@@ -60,21 +60,28 @@ public class MainActivity extends AppCompatActivity
                             public void onClick(View v)
                             {
                                 /* ==================================TRYING TO SEE IF FIELDS ARE LEFT BLANK, THIS DOESN'T SEEM TO WORK================================*/
-                                if(edit_AM_firstName.getText().toString() == null)
+                                if(edit_AM_firstName.getText().toString().isEmpty() || edit_AM_lastName.getText().toString().isEmpty() || edit_AM_userName.getText().toString().isEmpty() || edit_AM_password.getText().toString().isEmpty() || edit_AM_passwordConfirm.getText().toString().isEmpty())
                                 {
-                                    Toast.makeText(MainActivity.this, "DISCOVERED NULL VALUE", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(MainActivity.this, "Please fill out all fields.", Toast.LENGTH_LONG).show();
                                 }
-
-                                boolean isInserted = myDB.insertData(edit_AM_userName.getText().toString(), edit_AM_password.getText().toString(), edit_AM_firstName.getText().toString(), edit_AM_lastName.getText().toString(), 0);
-
-                                if(isInserted == true)
+                                else if (!(edit_AM_password.getText().toString().equals(edit_AM_passwordConfirm.getText().toString())))
                                 {
-                                    Toast.makeText(MainActivity.this, "Account Created", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(MainActivity.this, "Passwords do not match.", Toast.LENGTH_LONG).show();
                                 }
                                 else
                                 {
-                                    Toast.makeText(MainActivity.this, "Account NOT Created", Toast.LENGTH_LONG).show();
+                                    boolean isInserted = myDB.insertData(edit_AM_userName.getText().toString(), edit_AM_password.getText().toString(), edit_AM_firstName.getText().toString(), edit_AM_lastName.getText().toString(), 0);
+
+                                    if(isInserted == true)
+                                    {
+                                        Toast.makeText(MainActivity.this, "Account Created", Toast.LENGTH_LONG).show();
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(MainActivity.this, "Account NOT Created", Toast.LENGTH_LONG).show();
+                                    }
                                 }
+
 
                             }
                         }
