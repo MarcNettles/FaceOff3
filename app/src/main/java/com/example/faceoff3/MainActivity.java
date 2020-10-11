@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity
                             public void onClick(View v)
                             {
                                 /* ==================================TRYING TO SEE IF FIELDS ARE LEFT BLANK, THIS DOESN'T SEEM TO WORK================================*/
-                                if(edit_AM_firstName.getText().toString() == null)
+                                if(edit_AM_firstName.getText().toString() == "")
                                 {
                                     Toast.makeText(MainActivity.this, "DISCOVERED NULL VALUE", Toast.LENGTH_LONG).show();
                                 }
