@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity
                             @Override
                             public void onClick(View v)
                             {
-                                /* ==================================TRYING TO SEE IF FIELDS ARE LEFT BLANK, THIS DOESN'T SEEM TO WORK================================*/
                                 if(edit_AM_firstName.getText().toString().isEmpty() || edit_AM_lastName.getText().toString().isEmpty() || edit_AM_userName.getText().toString().isEmpty() || edit_AM_password.getText().toString().isEmpty() || edit_AM_passwordConfirm.getText().toString().isEmpty())
                                 {
                                     Toast.makeText(MainActivity.this, "Please fill out all fields.", Toast.LENGTH_LONG).show();
