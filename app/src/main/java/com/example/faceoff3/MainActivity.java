@@ -3,6 +3,7 @@ package com.example.faceoff3;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity
 
 
         AM_createAccount();
+        AM_signIn();
     }
 
 
@@ -50,22 +52,49 @@ public class MainActivity extends AppCompatActivity
                             @Override
                             public void onClick(View v)
                             {
-                                if(edit_AM_password == edit_AM_passwordConfirm)
+                                /* ==================================TRYING TO SEE IF FIELDS ARE LEFT BLANK, THIS DOESN'T SEEM TO WORK================================*/
+                                if(edit_AM_firstName.getText().toString() == null)
                                 {
-                                    boolean isInserted = myDB.insertData(edit_AM_userName.getText().toString(), edit_AM_password.getText().toString(), edit_AM_firstName.getText().toString(), edit_AM_lastName.getText().toString());
-
-                                    if(isInserted == true)
-                                    {
-                                        Toast.makeText(MainActivity.this, "Account Created", Toast.LENGTH_LONG).show();
-                                    }
-                                    else
-                                    {
-                                        Toast.makeText(MainActivity.this, "Account NOT Created", Toast.LENGTH_LONG).show();
-                                    }
+                                    Toast.makeText(MainActivity.this, "DISCOVERED NULL VALUE", Toast.LENGTH_LONG).show();
                                 }
-                               else
+
+                                boolean isInserted = myDB.insertData(edit_AM_userName.getText().toString(), edit_AM_password.getText().toString(), edit_AM_firstName.getText().toString(), edit_AM_lastName.getText().toString(), 0);
+
+                                if(isInserted == true)
                                 {
-                                    Toast.makeText(MainActivity.this, "Passwords do not match.", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(MainActivity.this, "Account Created", Toast.LENGTH_LONG).show();
+                                }
+                                else
+                                {
+                                    Toast.makeText(MainActivity.this, "Account NOT Created", Toast.LENGTH_LONG).show();
+                                }
+
+                            }
+                        }
+                );
+    }
+
+
+
+    public void AM_signIn()
+    {
+        button_AM_signIn.setOnClickListener
+                (
+                        new View.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(View v)
+                            {
+
+
+                                Cursor userFound = myDB.findUser(edit_AM_userName.getText().toString(), edit_AM_password.getText().toString());
+                                if(userFound.getCount() == 0)
+                                {
+                                    Toast.makeText(MainActivity.this, "Account NOT Found", Toast.LENGTH_LONG).show();
+                                }
+                                else
+                                {
+                                    Toast.makeText(MainActivity.this, "Account Found", Toast.LENGTH_LONG).show();
                                 }
                             }
                         }

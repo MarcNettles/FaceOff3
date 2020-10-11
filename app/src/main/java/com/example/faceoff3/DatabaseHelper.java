@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -39,7 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
         onCreate(db);
     }
 
-    public boolean insertData(String userName, String password, String firstName, String lastName)
+    public boolean insertData(String userName, String password, String firstName, String lastName, Integer fTouches)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -49,6 +50,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
         //-------------------------------------------------------------------------------
         contentValues.put(COL_FIRSTNAME, firstName);
         contentValues.put(COL_LASTNAME, lastName);
+        contentValues.put(COL_FTOUCHES, fTouches);
 
         long result = db.insert(TABLE_NAME, null, contentValues);
 
@@ -63,6 +65,26 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
     }
 
+
+    public Cursor findUser(String userName, String password)
+    {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String[] columns = {COL_USERNAME, COL_PASSWORD};
+
+        String[] arguments = {userName};
+
+        Cursor res = db.query(TABLE_NAME, columns, COL_USERNAME+" LIKE ?", arguments, null, null, null);
+
+        return res;
+    }
+
+
+
+
+
+    /*
     public Cursor getAllData()
     {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -94,4 +116,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
         return db.delete(TABLE_NAME, "userName = ?", new String[] { userName });
     }
+
+
+     */
 }
