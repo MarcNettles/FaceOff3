@@ -12,17 +12,28 @@ import androidx.annotation.Nullable;
 /*This class builds our initial database and keeps using the same one once it is built. User data is persistent on drive. If we want online capabilities, someone will need to code that in PHP and run a server*/
 public class DatabaseHelper extends SQLiteOpenHelper
 {
+    /*The database, named faceoff3 for now*/
     public static final String DATABASE_NAME = "faceoff3.db";
+
+    /*Tables. Currently just user and informative tips*/
     public static final String TABLE_NAME = "user";
+    public static final String INFORMATIVE_TIPS = "informativeTips";
+
+
     //public static final String COL_ID = "id";
 
     /*Here are our columns. If you want to add a column, copy this format and then update the number of columns in the create table in onCreate. Other functions will be affected, so check to make sure other functions aren't affected before adding*/
+
+    /*Table user: columns*/
     public static final String COL_USERNAME = "userName";
     public static final String COL_PASSWORD = "password";
     public static final String COL_FIRSTNAME = "firstName";
     public static final String COL_LASTNAME = "lastName";
     public static final String COL_FTOUCHES = "fTouches";
 
+    /*Table informativeTips: columns*/
+    public static final String COL_IT_ID = "id";
+    public static final String COL_IT_TIP = "tip";
 
     /*Constructor, it builds the database*/
     public DatabaseHelper(@Nullable Context context)
@@ -36,6 +47,10 @@ public class DatabaseHelper extends SQLiteOpenHelper
     public void onCreate(SQLiteDatabase db)
     {
         db.execSQL("create table " + TABLE_NAME + " (userName text primary key, password text, firstName text, lastName text, fTouches integer)");
+
+        /*Informative Tab: tip table creation*/
+       // db.execSQL("create table "+ INFORMATIVE_TIPS + " (id integer primary key, tip text)");
+        //fillTipTable(INFORMATIVE_TIPS);
     }
 
     /*Still not sure about this one. I suppose it would delete all the data and recreate the tables.*/
@@ -76,6 +91,95 @@ public class DatabaseHelper extends SQLiteOpenHelper
             return true;
         }
 
+    }
+
+    /*This is just used to fill the tip table with default values to pull from randomly. I figure the tips will be a randomly chosen tip popping up on the user's tip of the day or something.*/
+    public boolean fillTipTable(String tableName)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+
+        /* Here we hard code the tips to pull from */
+        contentValues.put(COL_IT_ID, 1);
+        contentValues.put(COL_IT_TIP, "Wear a mask. Save lives.");
+
+        contentValues.put(COL_IT_ID, 2);
+        contentValues.put(COL_IT_TIP, "Wash your hands with soap and water for at least 20 seconds");
+
+        contentValues.put(COL_IT_ID, 3);
+        contentValues.put(COL_IT_TIP, "Water alone is not enough! To prevent spread of the virus, you must use soap as well!");
+
+        contentValues.put(COL_IT_ID, 4);
+        contentValues.put(COL_IT_TIP, "Sanitizer should be at least 60% alcohol.");
+
+        contentValues.put(COL_IT_ID, 5);
+        contentValues.put(COL_IT_TIP, "Cough into your elbow to reduce the spray of germs.");
+
+        contentValues.put(COL_IT_ID, 6);
+        contentValues.put(COL_IT_TIP, "Wear masks with two or more layers.");
+
+        contentValues.put(COL_IT_ID, 7);
+        contentValues.put(COL_IT_TIP, "Masks need to cover your nose and mouth, secured under your chin.");
+
+        contentValues.put(COL_IT_ID, 8);
+        contentValues.put(COL_IT_TIP, "Masks with breathing valves are a no go!");
+
+        contentValues.put(COL_IT_ID, 9);
+        contentValues.put(COL_IT_TIP, "Do not put masks on children younger than 2 years old.");
+
+        contentValues.put(COL_IT_ID, 10);
+        contentValues.put(COL_IT_TIP, "Avoid touching your face with unwashed hands!");
+
+        contentValues.put(COL_IT_ID, 11);
+        contentValues.put(COL_IT_TIP, "Clean and disinfect frequently touched surfaces daily.");
+
+        contentValues.put(COL_IT_ID, 12);
+        contentValues.put(COL_IT_TIP, "Wear gloves when disinfecting. Chemicals can enter your bloodstream through the skin.");
+
+        contentValues.put(COL_IT_ID, 13);
+        contentValues.put(COL_IT_TIP, "Maintain 6 feet of distance from others at all times.");
+
+        contentValues.put(COL_IT_ID, 14);
+        contentValues.put(COL_IT_TIP, "Constant handwashing can lead to dry skin. Try using a soap with a moisturizer, such as Dove.");
+
+        contentValues.put(COL_IT_ID, 15);
+        contentValues.put(COL_IT_TIP, "If someone in the house is sick, make sure they use a separate bathroom.");
+
+        contentValues.put(COL_IT_ID, 16);
+        contentValues.put(COL_IT_TIP, "Replace your HVAC filter regularly.");
+
+        contentValues.put(COL_IT_ID, 17);
+        contentValues.put(COL_IT_TIP, "HVAC systems only filter when on, so turn on the system fan without heating or cooling for longer times.");
+
+        contentValues.put(COL_IT_ID, 18);
+        contentValues.put(COL_IT_TIP, "Stay up to date by visiting www.cdc.gov/coronavirus");
+
+        contentValues.put(COL_IT_ID, 19);
+        contentValues.put(COL_IT_TIP, "If you are sick, stay home!");
+
+        contentValues.put(COL_IT_ID, 20);
+        contentValues.put(COL_IT_TIP, "If you are sick, stay hydrated!");
+
+        contentValues.put(COL_IT_ID, 21);
+        contentValues.put(COL_IT_TIP, "You don’t have to go to the hospital to be seen. Many doctors are using online consultations to keep people safely away from hospitals filled with coronavirus patients.");
+
+        contentValues.put(COL_IT_ID, 22);
+        contentValues.put(COL_IT_TIP, "Coronavirus symptoms include fever, chills, cough, shortness of breath, and many more. Visit the CDC’s website for a full list.");
+
+        contentValues.put(COL_IT_ID, 23);
+        contentValues.put(COL_IT_TIP, "Seek IMMEDIATE medical attention if you experience: Trouble breathing, persistent chest pain, confusion, inability to stay awake, or bluish lips/face.");
+
+        long result = db.insert(tableName, null, contentValues);
+
+        if(result == -1)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
 
