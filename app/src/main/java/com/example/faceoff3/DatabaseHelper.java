@@ -113,7 +113,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         if(userName.isEmpty())
-            return
+            return false; // We at least need a user name
 
         if(!userName.isEmpty())
             contentValues.put(COL_USERNAME, userName);
