@@ -38,7 +38,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     /*Constructor, it builds the database*/
     public DatabaseHelper(@Nullable Context context)
     {
-        super(context, DATABASE_NAME, null, 1);
+        super(context, DATABASE_NAME, null, 2);
 
     }
 
@@ -49,7 +49,9 @@ public class DatabaseHelper extends SQLiteOpenHelper
         db.execSQL("create table " + TABLE_NAME + " (userName text primary key, password text, firstName text, lastName text, fTouches integer)");
 
         /*Informative Tab: tip table creation*/
-       // db.execSQL("create table "+ INFORMATIVE_TIPS + " (id integer primary key, tip text)");
+        db.execSQL("create table "+ INFORMATIVE_TIPS + " (id integer primary key, tip text)");
+
+        /* This doesn't work, I'm not sure why yet */
         //fillTipTable(INFORMATIVE_TIPS);
     }
 
@@ -94,6 +96,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
     }
 
     /*This is just used to fill the tip table with default values to pull from randomly. I figure the tips will be a randomly chosen tip popping up on the user's tip of the day or something.*/
+
+    /*===============================================CURRENTLY NOT WORKING===========================================CRASHES THE APP */
     public boolean fillTipTable(String tableName)
     {
         SQLiteDatabase db = this.getWritableDatabase();
