@@ -269,7 +269,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
     }
 
 
-    public Cursor getRandomTip()
+    /*Needed to update the random tips at the bottom of the screen.*/
+    public String getRandomTip()
     {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -277,17 +278,34 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
         //res = db.rawQuery();
 
+        String returnString;
+        String failed = "failed";
 
 
-        String selectQuery = "select "+COL_IT_TIP+" from " +INFORMATIVE_TIPS+" order by random() limit 1";
+        String selectQuery = "select * from " +INFORMATIVE_TIPS+" limit 1";
 
 
 
-        Cursor res = db.rawQuery(selectQuery, null);
+        Cursor cursor = db.rawQuery(selectQuery, null);
 
-        return res;
+        if(cursor.getCount() == 1)
+        {
+            cursor.moveToFirst();
+            returnString = cursor.getString(cursor.getColumnIndex(COL_IT_TIP));
+            return returnString;
+
+
+        }
+        else
+        {
+            return failed;
+        }
+
 
     }
+
+
+   // public
 
 
 

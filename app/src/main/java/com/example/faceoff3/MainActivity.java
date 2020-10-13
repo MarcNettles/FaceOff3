@@ -3,6 +3,7 @@ package com.example.faceoff3;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
@@ -15,9 +16,8 @@ import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity
 {
-    String currentActiveUser = ""; // Track the current active user
+    public static String currentActiveUser; // Track the current active user
 
-    //GlobalVariables globalVariable = (GlobalVariables) this.getApplication();
 
 
     DatabaseHelper myDB; // Instance of the database
@@ -79,7 +79,9 @@ public class MainActivity extends AppCompatActivity
                             @Override
                             public void onClick(View v)
                             {
-                                setContentView(R.layout.activity_informative_tab);
+                                //setContentView(R.layout.activity_informative_tab);
+                                Intent intent = new Intent(this, informativeTabActivity.class);
+                                startActivity(intent);
                             }
                         }
                 );
@@ -153,8 +155,6 @@ public class MainActivity extends AppCompatActivity
                                     textView_AM_activeUser.setText(edit_AM_userName.getText().toString());
                                     currentActiveUser = edit_AM_userName.getText().toString();
 
-
-                                    //globalVariables.setCurrentActiveUser(currentActiveUser.toString());  // Edited out, crashes the program
 
 
 
