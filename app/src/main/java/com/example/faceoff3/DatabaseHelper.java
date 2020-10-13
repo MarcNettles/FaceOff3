@@ -95,9 +95,11 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
     }
 
+    
+
+
     /*This is just used to fill the tip table with default values to pull from randomly. I figure the tips will be a randomly chosen tip popping up on the user's tip of the day or something.*/
 
-    /*===============================================CURRENTLY NOT WORKING===========================================CRASHES THE APP */
     public boolean fillTipTable(String tableName)
     {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -107,69 +109,91 @@ public class DatabaseHelper extends SQLiteOpenHelper
         /* Here we hard code the tips to pull from */
         contentValues.put(COL_IT_ID, 1);
         contentValues.put(COL_IT_TIP, "Wear a mask. Save lives.");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 2);
         contentValues.put(COL_IT_TIP, "Wash your hands with soap and water for at least 20 seconds");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 3);
         contentValues.put(COL_IT_TIP, "Water alone is not enough! To prevent spread of the virus, you must use soap as well!");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 4);
         contentValues.put(COL_IT_TIP, "Sanitizer should be at least 60% alcohol.");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 5);
         contentValues.put(COL_IT_TIP, "Cough into your elbow to reduce the spray of germs.");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 6);
         contentValues.put(COL_IT_TIP, "Wear masks with two or more layers.");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 7);
         contentValues.put(COL_IT_TIP, "Masks need to cover your nose and mouth, secured under your chin.");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 8);
         contentValues.put(COL_IT_TIP, "Masks with breathing valves are a no go!");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 9);
         contentValues.put(COL_IT_TIP, "Do not put masks on children younger than 2 years old.");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 10);
         contentValues.put(COL_IT_TIP, "Avoid touching your face with unwashed hands!");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 11);
         contentValues.put(COL_IT_TIP, "Clean and disinfect frequently touched surfaces daily.");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 12);
         contentValues.put(COL_IT_TIP, "Wear gloves when disinfecting. Chemicals can enter your bloodstream through the skin.");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 13);
         contentValues.put(COL_IT_TIP, "Maintain 6 feet of distance from others at all times.");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 14);
         contentValues.put(COL_IT_TIP, "Constant handwashing can lead to dry skin. Try using a soap with a moisturizer, such as Dove.");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 15);
         contentValues.put(COL_IT_TIP, "If someone in the house is sick, make sure they use a separate bathroom.");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 16);
         contentValues.put(COL_IT_TIP, "Replace your HVAC filter regularly.");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 17);
         contentValues.put(COL_IT_TIP, "HVAC systems only filter when on, so turn on the system fan without heating or cooling for longer times.");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 18);
         contentValues.put(COL_IT_TIP, "Stay up to date by visiting www.cdc.gov/coronavirus");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 19);
         contentValues.put(COL_IT_TIP, "If you are sick, stay home!");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 20);
         contentValues.put(COL_IT_TIP, "If you are sick, stay hydrated!");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 21);
         contentValues.put(COL_IT_TIP, "You don’t have to go to the hospital to be seen. Many doctors are using online consultations to keep people safely away from hospitals filled with coronavirus patients.");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 22);
         contentValues.put(COL_IT_TIP, "Coronavirus symptoms include fever, chills, cough, shortness of breath, and many more. Visit the CDC’s website for a full list.");
+        db.insert(tableName, null, contentValues);
 
         contentValues.put(COL_IT_ID, 23);
         contentValues.put(COL_IT_TIP, "Seek IMMEDIATE medical attention if you experience: Trouble breathing, persistent chest pain, confusion, inability to stay awake, or bluish lips/face.");

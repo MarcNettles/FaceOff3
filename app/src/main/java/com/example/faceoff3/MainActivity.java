@@ -33,11 +33,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         myDB = new DatabaseHelper(this);  // Get the new instance of the DB, this may need to be taken out of onCreate if it poses a problem.
-
+        //myDB.insertOne();
+        myDB.fillTipTable("informativeTips");
 
         /* Here we link the variables above to their activity_main (AM) items */
         textView_AM_activeUser = (TextView)findViewById(R.id.textView_AM_activeUser);
