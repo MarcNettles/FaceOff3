@@ -95,7 +95,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
     }
 
-    
+
 
 
     /*This is just used to fill the tip table with default values to pull from randomly. I figure the tips will be a randomly chosen tip popping up on the user's tip of the day or something.*/
@@ -268,6 +268,26 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
     }
 
+
+    public Cursor getRandomTip()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //String res;
+
+        //res = db.rawQuery();
+
+
+
+        String selectQuery = "select "+COL_IT_TIP+" from " +INFORMATIVE_TIPS+" order by random() limit 1";
+
+
+
+        Cursor res = db.rawQuery(selectQuery, null);
+
+        return res;
+
+    }
 
 
 

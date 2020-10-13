@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity
 {
     String currentActiveUser = ""; // Track the current active user
 
-    //GlobalVariables globalVariables = (GlobalVariables) this.getApplication();
+    //GlobalVariables globalVariable = (GlobalVariables) this.getApplication();
 
 
     DatabaseHelper myDB; // Instance of the database
@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity
     EditText edit_AM_userName, edit_AM_password, edit_AM_passwordConfirm, edit_AM_firstName, edit_AM_lastName;
 
     Button button_AM_signIn, button_AM_createAccount;
+
+    Button button_toIT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -54,11 +56,34 @@ public class MainActivity extends AppCompatActivity
         button_AM_createAccount = (Button) findViewById(R.id.button_AM_createAccount);
 
 
+        button_toIT = (Button)findViewById(R.id.button_toIT);
+
+
+
+
         /* Here we have to call the functions we create below.*/
         AM_createAccount();
         AM_signIn();
+
+        AM_toIT();
     }
 
+
+
+    public void AM_toIT()
+    {
+        button_toIT.setOnClickListener
+                (
+                        new View.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(View v)
+                            {
+                                setContentView(R.layout.activity_informative_tab);
+                            }
+                        }
+                );
+    }
 
 /* These functions are mostly just the button name with a ClickListener to do things inside which I'll annotate anyhow so I won't repeat myself here.*/
     public void AM_createAccount()
