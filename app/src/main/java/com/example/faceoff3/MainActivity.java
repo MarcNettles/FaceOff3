@@ -12,8 +12,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 public class MainActivity extends AppCompatActivity
 {
     public static String currentActiveUser; // Track the current active user
@@ -81,7 +79,7 @@ public class MainActivity extends AppCompatActivity
                             public void onClick(View v)
                             {
                                 // Intent(this, informativeTabActivity.class) DID NOT WORK, so I had to do it like this
-                                Intent intent = new Intent(MainActivity.this, informativeTabActivity.class);
+                                Intent intent = new Intent(MainActivity.this, InformativeTabActivity.class);
                                 startActivity(intent);
                             }
                         }
@@ -156,10 +154,11 @@ public class MainActivity extends AppCompatActivity
                                     textView_AM_activeUser.setText(edit_AM_userName.getText().toString());
                                     currentActiveUser = edit_AM_userName.getText().toString();
 
-
-                                    Intent intent = new Intent(MainActivity.this, informativeTabActivity.class);
-                                    startActivity(intent);
                                     fTouches = myDB.getfTouches(currentActiveUser);
+                                    //Intent intent = new Intent(MainActivity.this, informativeTabActivity.class);
+                                    Intent intent = new Intent(MainActivity.this, HomeScreenActivity.class);
+                                    startActivity(intent);
+
 
 
 

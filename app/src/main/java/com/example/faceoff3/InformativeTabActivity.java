@@ -1,19 +1,14 @@
 package com.example.faceoff3;
 
-import androidx.appcompat.app.AlertDialog;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.w3c.dom.Text;
-
-public class informativeTabActivity extends AppCompatActivity
+public class InformativeTabActivity extends AppCompatActivity
 {
 
 
@@ -73,7 +68,7 @@ public class informativeTabActivity extends AppCompatActivity
                             @Override
                             public void onClick(View v)
                             {
-                                Intent intent = new Intent(informativeTabActivity.this, MainActivity.class);
+                                Intent intent = new Intent(InformativeTabActivity.this, MainActivity.class);
                                 startActivity(intent);
                                 MainActivity.currentActiveUser = "";
                             }
