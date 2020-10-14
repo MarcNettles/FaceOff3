@@ -367,6 +367,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
 
 
+
+
     /*These are just some extra helper functions to be used as needed
     *
     *
