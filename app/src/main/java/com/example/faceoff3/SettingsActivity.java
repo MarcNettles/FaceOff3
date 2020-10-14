@@ -35,7 +35,7 @@ public class SettingsActivity extends AppCompatActivity
         textView_AS_helloMessage = (TextView)findViewById(R.id.textView_AS_helloMessage);
 
         button_AS_logOut = (Button)findViewById(R.id.button_AS_logOut);
-        imageButton_AHS_informativeTab = (ImageButton)findViewById(R.id.imageButton_AHS_informativeTab);
+        imageButton_AHS_informativeTab = (ImageButton)findViewById(R.id.imageButton_AS_informativeTab);
 
 
 

@@ -21,6 +21,7 @@
         <activity android:name=".InformativeTabActivity" />
         <activity android:name=".HomeScreenActivity" />
         <activity android:name=".SettingsActivity" />
+        <activity android:name=".MapActivity" />
     </application>
 
 </manifest>

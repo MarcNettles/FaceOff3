@@ -119,7 +119,7 @@
         android:layout_width="409dp"
         android:layout_height="1dp"
         android:background="?android:attr/listDivider"
-        app:layout_constraintBottom_toTopOf="@+id/imageButton_AHS_informativeTab"
+        app:layout_constraintBottom_toTopOf="@+id/imageButton_AS_informativeTab"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -144,7 +144,8 @@
         android:layout_height="41dp"
         android:layout_marginStart="51dp"
         android:src="@drawable/greenplus"
-        android:scaleType="fitXY"
+        android:scaleType="fitCenter"
+        android:padding="1dp"
         android:text="Washed Hands!"
         app:layout_constraintBottom_toTopOf="@+id/textView_AHS_leftHome"
         app:layout_constraintEnd_toEndOf="parent"
@@ -154,7 +155,7 @@
         app:layout_constraintVertical_bias="0.384" />
 
     <ImageButton
-        android:id="@+id/imageButton_AHS_informativeTab"
+        android:id="@+id/imageButton_AS_informativeTab"
         android:layout_width="49dp"
         android:layout_height="47dp"
         android:layout_marginStart="40dp"
@@ -162,30 +163,36 @@
         android:text="Informative Tab"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="?android:attr/textSelectHandleLeft" />
+        app:srcCompat="@drawable/facetouch_hand"
+        android:scaleType="fitCenter"
+        android:padding="1dp"/>
 
     <ImageButton
         android:id="@+id/imageButton_AHS_settings"
         android:layout_width="64dp"
         android:layout_height="48dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="44dp"
+        android:padding="1dp"
+        android:scaleType="fitCenter"
         android:text="Settings"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider"
-        app:layout_constraintVertical_bias="0.548"
-        app:srcCompat="@android:drawable/ic_menu_preferences" />
+        app:layout_constraintVertical_bias="0.448"
+        app:srcCompat="@drawable/settings_gear" />
 
     <ImageButton
         android:id="@+id/imageButton_AHS_maps"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="55dp"
+        android:layout_height="47dp"
+        android:padding="1dp"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/imageButton_AHS_settings"
-        app:layout_constraintHorizontal_bias="0.556"
-        app:layout_constraintStart_toEndOf="@+id/imageButton_AHS_informativeTab"
+        app:layout_constraintHorizontal_bias="0.517"
+        app:layout_constraintStart_toEndOf="@+id/imageButton_AS_informativeTab"
         app:layout_constraintTop_toBottomOf="@+id/divider"
-        app:layout_constraintVertical_bias="0.607"
-        app:srcCompat="@android:drawable/btn_star_big_on" />
+        app:layout_constraintVertical_bias="0.444"
+        app:srcCompat="@drawable/map" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

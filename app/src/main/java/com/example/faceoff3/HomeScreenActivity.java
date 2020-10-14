@@ -3,7 +3,6 @@ package com.example.faceoff3;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -23,7 +22,7 @@ public class HomeScreenActivity extends AppCompatActivity
 
 
 
-    ImageButton imageButton_AHS_informativeTab, imageButton_AHS_settings, imageButton_AHS_increaseWashedHands;
+    ImageButton imageButton_AHS_informativeTab, imageButton_AHS_settings, imageButton_AHS_increaseWashedHands, imageButton_AHS_maps;
 
 
 
@@ -61,9 +60,10 @@ public class HomeScreenActivity extends AppCompatActivity
         textView_AHS_washedHands = (TextView)findViewById(R.id.textView_AHS_washedHands);
         textView_AHS_warnBehaviorBottom = (TextView)findViewById(R.id.textView_AHS_warnBehaviorBottom);
 
-        imageButton_AHS_informativeTab = (ImageButton)findViewById(R.id.imageButton_AHS_informativeTab);
+        imageButton_AHS_informativeTab = (ImageButton)findViewById(R.id.imageButton_AS_informativeTab);
         imageButton_AHS_settings = (ImageButton)findViewById(R.id.imageButton_AHS_settings);
         imageButton_AHS_increaseWashedHands = (ImageButton)findViewById(R.id.button_AHS_increaseWashedHands);
+        imageButton_AHS_maps = (ImageButton)findViewById(R.id.imageButton_AHS_maps);
 
 
 
@@ -77,12 +77,31 @@ public class HomeScreenActivity extends AppCompatActivity
 
         goToInformativeTab();
         goToSettings();
+        goToMaps();
+
 
         increaseWashedHands();
 
 
+
     }
 
+
+    public void goToMaps()
+    {
+        imageButton_AHS_maps.setOnClickListener
+                (
+                        new View.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(View v)
+                            {
+                                Intent intent = new Intent(HomeScreenActivity.this, MapActivity.class);
+                                startActivity(intent);
+                            }
+                        }
+                );
+    }
 
 
     public void updateRisk()

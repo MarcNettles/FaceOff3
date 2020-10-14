@@ -161,6 +161,15 @@ public class MainActivity extends AppCompatActivity
 
 
 
+
+    /* Function to reset all variables storing user information.*/
+    public static void clearUserData()
+    {
+        currentActiveUser = "";
+        fTouches = 0;
+        washedHands = 0;
+    }
+
 /*Could be useful*/
 
     public void showMessage(String title, String message)

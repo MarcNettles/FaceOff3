@@ -79,9 +79,11 @@ public class InformativeTabActivity extends AppCompatActivity
                                 startActivity(intent);
 
                                 /* Clear out the variables and reset the info, just in case they get back to this screen after logging out */
-                                MainActivity.currentActiveUser = "";
-                                MainActivity.fTouches = 0;
-                                MainActivity.washedHands = 0;
+
+                                MainActivity.clearUserData();
+                                // MainActivity.currentActiveUser = "";
+                                //MainActivity.fTouches = 0;
+                               // MainActivity.washedHands = 0;
 
                                 textView_AIT_activeUser.setText("");
                                 textView_AIT_fTouches.setText("0");
