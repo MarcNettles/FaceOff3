@@ -10,10 +10,10 @@
         android:id="@+id/button_AS_pairTracker"
         android:layout_width="256dp"
         android:layout_height="56dp"
-        android:layout_marginTop="68dp"
+        android:layout_marginTop="64dp"
         android:text="Pair New FaceOff Tracker"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.432"
+        app:layout_constraintHorizontal_bias="0.509"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView_AHS_imgFaceOff" />
 
