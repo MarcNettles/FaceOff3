@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity
 
                                     Intent intent = new Intent(MainActivity.this, informativeTabActivity.class);
                                     startActivity(intent);
-                                    //fTouches = myDB.getfTouches(currentActiveUser);
+                                    fTouches = myDB.getfTouches(currentActiveUser);
 
 
 

@@ -75,7 +75,7 @@ public class informativeTabActivity extends AppCompatActivity
                             {
                                 Intent intent = new Intent(informativeTabActivity.this, MainActivity.class);
                                 startActivity(intent);
-                                MainActivity.currentActiveUser = "";
+                               // MainActivity.currentActiveUser = "";
                             }
                         }
                 );
