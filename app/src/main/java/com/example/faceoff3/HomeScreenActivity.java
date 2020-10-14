@@ -21,9 +21,9 @@ public class HomeScreenActivity extends AppCompatActivity
 
     TextView textView_AHS_randomTip, textView_AHS_touchedFace, textView_AHS_washedHands, textView_AHS_warnBehaviorBottom;
 
-    Button button_AHS_increaseWashedHands;
 
-    ImageButton imageButton_AHS_informativeTab, imageButton_AHS_settings;
+
+    ImageButton imageButton_AHS_informativeTab, imageButton_AHS_settings, imageButton_AHS_increaseWashedHands;
 
 
 
@@ -63,7 +63,7 @@ public class HomeScreenActivity extends AppCompatActivity
 
         imageButton_AHS_informativeTab = (ImageButton)findViewById(R.id.imageButton_AHS_informativeTab);
         imageButton_AHS_settings = (ImageButton)findViewById(R.id.imageButton_AHS_settings);
-        button_AHS_increaseWashedHands = (Button)findViewById(R.id.button_AHS_increaseWashedHands);
+        imageButton_AHS_increaseWashedHands = (ImageButton)findViewById(R.id.button_AHS_increaseWashedHands);
 
 
 
@@ -125,7 +125,7 @@ public class HomeScreenActivity extends AppCompatActivity
 
     public void increaseWashedHands()
     {
-        button_AHS_increaseWashedHands.setOnClickListener
+        imageButton_AHS_increaseWashedHands.setOnClickListener
                 (
                         new View.OnClickListener()
                         {
