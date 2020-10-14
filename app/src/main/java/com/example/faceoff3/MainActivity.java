@@ -17,6 +17,7 @@ import org.w3c.dom.Text;
 public class MainActivity extends AppCompatActivity
 {
     public static String currentActiveUser; // Track the current active user
+    public static Integer fTouches = 0;
 
 
 
@@ -79,8 +80,8 @@ public class MainActivity extends AppCompatActivity
                             @Override
                             public void onClick(View v)
                             {
-                                //setContentView(R.layout.activity_informative_tab);
-                                Intent intent = new Intent(this, informativeTabActivity.class);
+                                // Intent(this, informativeTabActivity.class) DID NOT WORK, so I had to do it like this
+                                Intent intent = new Intent(MainActivity.this, informativeTabActivity.class);
                                 startActivity(intent);
                             }
                         }
@@ -154,6 +155,12 @@ public class MainActivity extends AppCompatActivity
                                     /*This bit is used to set the Logged In As text and set the Activity variable currentActiveUser*/
                                     textView_AM_activeUser.setText(edit_AM_userName.getText().toString());
                                     currentActiveUser = edit_AM_userName.getText().toString();
+
+
+                                    Intent intent = new Intent(MainActivity.this, informativeTabActivity.class);
+                                    startActivity(intent);
+                                    //fTouches = myDB.getfTouches(currentActiveUser);
+
 
 
 

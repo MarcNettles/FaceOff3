@@ -1,6 +1,8 @@
 package com.example.faceoff3;
 
 import androidx.appcompat.app.AlertDialog;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.view.View;
@@ -22,7 +24,7 @@ public class informativeTabActivity extends AppCompatActivity
 
     TextView textView_AIT_informativeTips,textView_AIT_fTouches, textView_AIT_head_fTouches, textView_AIT_loggedInAs, textView_AIT_activeUser;
 
-    Button button_nextTip;
+    Button button_nextTip, button_logOut;
 
 
     @Override
@@ -44,19 +46,39 @@ public class informativeTabActivity extends AppCompatActivity
 
 
         button_nextTip = (Button)findViewById(R.id.button_nextTip);
+        button_logOut = (Button)findViewById(R.id.button_logOut);
 
 
 
         textView_AIT_activeUser.setText(MainActivity.currentActiveUser);
 
-        textView_AIT_activeUser.setText("In onCreate");
+        textView_AIT_fTouches.setText(MainActivity.fTouches.toString());
+
 
         //textView_AIT_fTouches
 
 
 
         nextTip();
+        logOut();
 
+    }
+
+    public void logOut()
+    {
+        button_logOut.setOnClickListener
+                (
+                        new View.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(View v)
+                            {
+                                Intent intent = new Intent(informativeTabActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                MainActivity.currentActiveUser = "";
+                            }
+                        }
+                );
     }
 
     public void nextTip()
@@ -68,11 +90,8 @@ public class informativeTabActivity extends AppCompatActivity
                             @Override
                             public void onClick(View v)
                             {
-                                Toast.makeText(informativeTabActivity.this, "BUTTON CLICKED", Toast.LENGTH_LONG).show();
-                                textView_AIT_activeUser.setText(MainActivity.currentActiveUser);
+
                                 textView_AIT_informativeTips.setText(myDB.getRandomTip());
-
-
 
 
                             }
