@@ -62,9 +62,7 @@ public class SettingsActivity extends AppCompatActivity
                             @Override
                             public void onClick(View v)
                             {
-                                /* This goes to the MainActivity class */
-                                Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
-                                startActivity(intent);
+
 
                                 /* Clear out the variables and reset the info, just in case they get back to this screen after logging out */
                                 MainActivity.currentActiveUser = "";
@@ -73,6 +71,11 @@ public class SettingsActivity extends AppCompatActivity
 
                                 textView_AS_helloMessage.setText("Hello, User!");
 
+
+                                /* This clears the activity stack and goes to the MainActivity class (sign in screen) */
+                                finishAffinity();
+                                Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
+                                startActivity(intent);
                             }
                         }
                 );

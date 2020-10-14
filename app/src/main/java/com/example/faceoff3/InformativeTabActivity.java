@@ -74,9 +74,7 @@ public class InformativeTabActivity extends AppCompatActivity
                             @Override
                             public void onClick(View v)
                             {
-                                /* This goes to the MainActivity class */
-                                Intent intent = new Intent(InformativeTabActivity.this, MainActivity.class);
-                                startActivity(intent);
+
 
                                 /* Clear out the variables and reset the info, just in case they get back to this screen after logging out */
 
@@ -88,6 +86,12 @@ public class InformativeTabActivity extends AppCompatActivity
                                 textView_AIT_activeUser.setText("");
                                 textView_AIT_fTouches.setText("0");
 
+
+
+                                /* This clears the activity stack and goes to the MainActivity class (sign in screen) */
+                                finishAffinity();
+                                Intent intent = new Intent(InformativeTabActivity.this, MainActivity.class);
+                                startActivity(intent);
                             }
                         }
                 );
@@ -112,6 +116,7 @@ public class InformativeTabActivity extends AppCompatActivity
                             @Override
                             public void onClick(View v)
                             {
+
 
                                 textView_AIT_informativeTips.setText(myDB.getRandomTip());
 
