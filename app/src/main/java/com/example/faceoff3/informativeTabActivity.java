@@ -81,6 +81,14 @@ public class informativeTabActivity extends AppCompatActivity
                 );
     }
 
+
+    /* Function to increment fTouches by 1. Call when the user touches their face */
+    public void incrementfTouches()
+    {
+        myDB.incrementfTouches(MainActivity.currentActiveUser, 1);
+
+    }
+
     public void nextTip()
     {
         button_nextTip.setOnClickListener
@@ -92,6 +100,7 @@ public class informativeTabActivity extends AppCompatActivity
                             {
 
                                 textView_AIT_informativeTips.setText(myDB.getRandomTip());
+
 
 
                             }

@@ -304,13 +304,13 @@ public class DatabaseHelper extends SQLiteOpenHelper
     }
 
 
-    public void incrementfTouches(String userID, Integer touches)
+    public void incrementfTouches(String userName, Integer touches)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         Integer fTouches = 0;
 
 
-        String selectQuery = "select "+COL_FTOUCHES+" from " +TABLE_NAME+" where userName = '"+userID+"'";
+        String selectQuery = "select "+COL_FTOUCHES+" from " +TABLE_NAME+" where userName = '"+userName+"'";
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         if(cursor.getCount() == 1)
@@ -324,6 +324,14 @@ public class DatabaseHelper extends SQLiteOpenHelper
         }
 
         fTouches = fTouches + touches;
+
+
+        // Put new value into the table
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COL_FTOUCHES, fTouches);
+
+        db.update(TABLE_NAME, contentValues, "userName = ?", new String[]{ userName });
 
 
 
