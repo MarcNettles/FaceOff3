@@ -4,12 +4,18 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+
 public class MapActivity extends AppCompatActivity
 {
 
     DatabaseHelper myDB;
 
 
+    MapView mapView_AMap_map;
+
+    OnMapReadyCallback mapView_AMap_map_CallBack;
 
 
 
@@ -21,6 +27,12 @@ public class MapActivity extends AppCompatActivity
 
 
         myDB = new DatabaseHelper(this);
+
+
+        mapView_AMap_map = (MapView)findViewById(R.id.mapView_AMap_map);
+
+        mapView_AMap_map.getMapAsync(mapView_AMap_map_CallBack);
+
     }
 
 }

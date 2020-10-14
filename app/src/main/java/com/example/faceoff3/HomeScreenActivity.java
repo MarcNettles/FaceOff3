@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +24,10 @@ public class HomeScreenActivity extends AppCompatActivity
 
 
     ImageButton imageButton_AHS_informativeTab, imageButton_AHS_settings, imageButton_AHS_increaseWashedHands, imageButton_AHS_maps;
+
+
+
+    ImageView imageView_AHS_imgFaceOff;
 
 
 
@@ -64,6 +69,13 @@ public class HomeScreenActivity extends AppCompatActivity
         imageButton_AHS_settings = (ImageButton)findViewById(R.id.imageButton_AHS_settings);
         imageButton_AHS_increaseWashedHands = (ImageButton)findViewById(R.id.button_AHS_increaseWashedHands);
         imageButton_AHS_maps = (ImageButton)findViewById(R.id.imageButton_AHS_maps);
+
+
+
+        imageView_AHS_imgFaceOff = (ImageView)findViewById(R.id.imageView_AHS_imgFaceOff);
+
+
+
 
 
 
