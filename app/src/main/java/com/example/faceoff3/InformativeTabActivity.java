@@ -29,9 +29,11 @@ public class InformativeTabActivity extends AppCompatActivity
         setContentView(R.layout.activity_informative_tab);
 
 
-
+        // Access the database
         myDB = new DatabaseHelper(this);
 
+
+        // Initialize the on screen items to their variables
         textView_AIT_informativeTips = (TextView)findViewById(R.id.textView_AIT_informativeTips);
         textView_AIT_head_fTouches = (TextView)findViewById(R.id.textView_AIT_head_fTouches);
         textView_AIT_fTouches = (TextView)findViewById(R.id.textView_AIT_fTouches);
@@ -39,15 +41,17 @@ public class InformativeTabActivity extends AppCompatActivity
         textView_AIT_activeUser = (TextView)findViewById(R.id.textView_AIT_activeUser);
 
 
-
         button_nextTip = (Button)findViewById(R.id.button_nextTip);
         button_logOut = (Button)findViewById(R.id.button_logOut);
 
 
-
+        //Show active user and how many times they have touched their face.
         textView_AIT_activeUser.setText(MainActivity.currentActiveUser);
 
         textView_AIT_fTouches.setText(MainActivity.fTouches.toString());
+
+
+        textView_AIT_informativeTips.setText(myDB.getRandomTip());
 
 
         //textView_AIT_fTouches
@@ -59,6 +63,8 @@ public class InformativeTabActivity extends AppCompatActivity
 
     }
 
+
+    /* Needs to disable the back button for the next screen. */
     public void logOut()
     {
         button_logOut.setOnClickListener
@@ -68,9 +74,15 @@ public class InformativeTabActivity extends AppCompatActivity
                             @Override
                             public void onClick(View v)
                             {
+                                /* This goes to the MainActivity class */
                                 Intent intent = new Intent(InformativeTabActivity.this, MainActivity.class);
                                 startActivity(intent);
+
+                                /* Clear out the variables and reset the info, just in case they get back to this screen after logging out */
                                 MainActivity.currentActiveUser = "";
+                                MainActivity.fTouches = 0;
+                                textView_AIT_activeUser.setText("");
+                                textView_AIT_fTouches.setText("0");
                             }
                         }
                 );
@@ -84,6 +96,8 @@ public class InformativeTabActivity extends AppCompatActivity
 
     }
 
+
+    /* Used to get a new random tip. Currently bound to the Next Tip button, but can be used elsewhere. */
     public void nextTip()
     {
         button_nextTip.setOnClickListener

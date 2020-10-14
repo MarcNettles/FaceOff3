@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity
 {
     public static String currentActiveUser; // Track the current active user
     public static Integer fTouches = 0;
+    public static Integer washedHands = 0;
 
 
 
@@ -67,7 +68,11 @@ public class MainActivity extends AppCompatActivity
         AM_toIT();
     }
 
-
+    /* Temporary fix. If user logs out, they can't go back to previous screen. This prevents them from putting funky data in the DB*/
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+    }
 
     public void AM_toIT()
     {
