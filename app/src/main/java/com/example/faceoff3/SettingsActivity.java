@@ -92,6 +92,8 @@ public class SettingsActivity extends AppCompatActivity
                             @Override
                             public void onClick(View v)
                             {
+
+                                finish();
                                 Intent intent = new Intent(SettingsActivity.this, InformativeTabActivity.class);
                                 startActivity(intent);
                             }
