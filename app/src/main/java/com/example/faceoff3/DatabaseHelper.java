@@ -16,7 +16,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     public static final String DATABASE_NAME = "faceoff3.db";
 
     /*Tables. Currently just user and informative tips*/
-    public static final String TABLE_NAME = "user";
+    public static final String USER_TABLE = "user";
     public static final String INFORMATIVE_TIPS = "informativeTips";
 
 
@@ -30,6 +30,9 @@ public class DatabaseHelper extends SQLiteOpenHelper
     public static final String COL_FIRSTNAME = "firstName";
     public static final String COL_LASTNAME = "lastName";
     public static final String COL_FTOUCHES = "fTouches";
+    public static final String COL_WASHEDHANDS_DAILYCOUNT = "washedHandsDailyCount";
+    public static final String COL_WASHEDHANDS_MONTHLYCOUNT = "washedHandsMonthlyCount";
+    //public static final String;
 
     /*Table informativeTips: columns*/
     public static final String COL_IT_ID = "id";
@@ -46,7 +49,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     @Override
     public void onCreate(SQLiteDatabase db)
     {
-        db.execSQL("create table " + TABLE_NAME + " (userName text primary key, password text, firstName text, lastName text, fTouches integer)");
+        db.execSQL("create table " + USER_TABLE + " (userName text primary key, password text, firstName text, lastName text, fTouches integer)");
 
         /*Informative Tab: tip table creation*/
         db.execSQL("create table "+ INFORMATIVE_TIPS + " (id integer primary key, tip text)");
@@ -59,7 +62,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
-        db.execSQL("drop table if exists " + TABLE_NAME);
+        db.execSQL("drop table if exists " + USER_TABLE);
         onCreate(db);
     }
 
@@ -82,7 +85,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
         contentValues.put(COL_LASTNAME, lastName);
         contentValues.put(COL_FTOUCHES, fTouches);
 
-        long result = db.insert(TABLE_NAME, null, contentValues); // Either the data is insert or it is not, db.insert() returns -1 if it did not insert successfully, otherwise it returns how many rows were affected.
+        long result = db.insert(USER_TABLE, null, contentValues); // Either the data is insert or it is not, db.insert() returns -1 if it did not insert successfully, otherwise it returns how many rows were affected.
 
         if(result == -1)
         {
@@ -217,7 +220,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
         SQLiteDatabase db = this.getWritableDatabase();
 
-        String selectQuery = "select "+COL_USERNAME+","+COL_PASSWORD+" from " +TABLE_NAME+" where "+COL_USERNAME+ " = ? and "+COL_PASSWORD+" = ?";
+        String selectQuery = "select "+COL_USERNAME+","+COL_PASSWORD+" from " +USER_TABLE+" where "+COL_USERNAME+ " = ? and "+COL_PASSWORD+" = ?";
 
         String[] arguments = {userName,password};
 
@@ -262,7 +265,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
         if(fTouches > 0)
             contentValues.put(COL_FTOUCHES, fTouches);
 
-        db.update(TABLE_NAME, contentValues, "userName = ?", new String[]{ userName });
+        db.update(USER_TABLE, contentValues, "userName = ?", new String[]{ userName });
 
         return true;
 
@@ -310,7 +313,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
         Integer fTouches = 0;
 
 
-        String selectQuery = "select "+COL_FTOUCHES+" from " +TABLE_NAME+" where userName = '"+userName+"'";
+        String selectQuery = "select "+COL_FTOUCHES+" from " +USER_TABLE+" where userName = '"+userName+"'";
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         if(cursor.getCount() == 1)
@@ -331,7 +334,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
         contentValues.put(COL_FTOUCHES, fTouches);
 
-        db.update(TABLE_NAME, contentValues, "userName = ?", new String[]{ userName });
+        db.update(USER_TABLE, contentValues, "userName = ?", new String[]{ userName });
 
 
 
@@ -343,7 +346,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
         SQLiteDatabase db = this.getWritableDatabase();
         Integer returnInt = 9999;
 
-        String selectQuery = "select "+COL_FTOUCHES+" from " +TABLE_NAME+" where userName = '"+userID+"'";
+        String selectQuery = "select "+COL_FTOUCHES+" from " +USER_TABLE+" where userName = '"+userID+"'";
 
 
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -382,7 +385,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        Cursor res = db.rawQuery("select * from " + TABLE_NAME, null);
+        Cursor res = db.rawQuery("select * from " + USER_TABLE, null);
         return res;
 
     }
@@ -399,7 +402,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
         contentValues.put(COL_LASTNAME, lastName);
         contentValues.put(COL_FTOUCHES, fTouches);
 
-        db.update(TABLE_NAME, contentValues, "userName = ?", new String[]{ userName });
+        db.update(USER_TABLE, contentValues, "userName = ?", new String[]{ userName });
 
         return true;
 
@@ -417,7 +420,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        return db.delete(TABLE_NAME, "userName = ?", new String[] { userName });
+        return db.delete(USER_TABLE, "userName = ?", new String[] { userName });
     }
 
 

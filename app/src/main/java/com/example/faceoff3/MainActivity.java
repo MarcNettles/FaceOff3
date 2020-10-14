@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity
 
     Button button_AM_signIn, button_AM_createAccount;
 
-    Button button_toIT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -56,7 +55,7 @@ public class MainActivity extends AppCompatActivity
         button_AM_createAccount = (Button) findViewById(R.id.button_AM_createAccount);
 
 
-        button_toIT = (Button)findViewById(R.id.button_toIT);
+
 
 
 
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity
         AM_createAccount();
         AM_signIn();
 
-        AM_toIT();
+
     }
 
     /* Temporary fix. If user logs out, they can't go back to previous screen. This prevents them from putting funky data in the DB*/
@@ -74,22 +73,7 @@ public class MainActivity extends AppCompatActivity
         //super.onBackPressed();
     }
 
-    public void AM_toIT()
-    {
-        button_toIT.setOnClickListener
-                (
-                        new View.OnClickListener()
-                        {
-                            @Override
-                            public void onClick(View v)
-                            {
-                                // Intent(this, informativeTabActivity.class) DID NOT WORK, so I had to do it like this
-                                Intent intent = new Intent(MainActivity.this, InformativeTabActivity.class);
-                                startActivity(intent);
-                            }
-                        }
-                );
-    }
+
 
 /* These functions are mostly just the button name with a ClickListener to do things inside which I'll annotate anyhow so I won't repeat myself here.*/
     public void AM_createAccount()
