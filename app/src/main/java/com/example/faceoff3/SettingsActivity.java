@@ -3,7 +3,9 @@ package com.example.faceoff3;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,6 +14,11 @@ public class SettingsActivity extends AppCompatActivity
 
     DatabaseHelper myDB;
 
+
+
+    TextView textView_AS_helloMessage;
+
+    Button button_AS_logOut;
     ImageButton imageButton_AHS_informativeTab;
 
 
@@ -25,21 +32,51 @@ public class SettingsActivity extends AppCompatActivity
 
 
 
+        textView_AS_helloMessage = (TextView)findViewById(R.id.textView_AS_helloMessage);
+
+        button_AS_logOut = (Button)findViewById(R.id.button_AS_logOut);
         imageButton_AHS_informativeTab = (ImageButton)findViewById(R.id.imageButton_AHS_informativeTab);
 
 
 
 
 
-        goToInformativeTab();
+        textView_AS_helloMessage.setText("Hello, "+MainActivity.currentActiveUser+"!");
 
+
+
+        goToInformativeTab();
+        logOut();
 
     }
 
 
 
 
+    public void logOut()
+    {
+        button_AS_logOut.setOnClickListener
+                (
+                        new View.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(View v)
+                            {
+                                /* This goes to the MainActivity class */
+                                Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
+                                startActivity(intent);
 
+                                /* Clear out the variables and reset the info, just in case they get back to this screen after logging out */
+                                MainActivity.currentActiveUser = "";
+                                MainActivity.fTouches = 0;
+                                MainActivity.washedHands = 0;
+
+                                textView_AS_helloMessage.setText("Hello, User!");
+
+                            }
+                        }
+                );
+    }
 
 
 
