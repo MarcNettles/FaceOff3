@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imageView_AHS_imgFaceOff"
+        android:layout_width="259dp"
+        android:layout_height="104dp"
+        android:src="@drawable/faceoff_logo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.521"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/imageView_AHS_imgHandWash"
+        android:layout_width="61dp"
+        android:layout_height="76dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_AHS_imgFacePalm"
+        android:src="@drawable/handwash"  />
+
+    <TextView
+        android:id="@+id/textView_AHS_washedHands"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="68dp"
+        android:text="You have washed your hands 0 times today."
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.51"
+        app:layout_constraintStart_toEndOf="@+id/imageView_AHS_imgHandWash"
+        app:layout_constraintTop_toBottomOf="@+id/textView_AHS_touchedFace" />
+
+    <ImageView
+        android:id="@+id/imageView_AHS_imgFacePalm"
+        android:layout_width="62dp"
+        android:layout_height="63dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_AHS_imgFaceOff"
+        android:src="@drawable/facetouch" />
+
+    <TextView
+        android:id="@+id/textView_AHS_touchedFace"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="You have touched your face 0 times today."
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView_AHS_imgFacePalm"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_AHS_imgFaceOff" />
+
+    <ImageView
+        android:id="@+id/imageView_AHS_imgHouse"
+        android:layout_width="58dp"
+        android:layout_height="57dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_AHS_imgHandWash"
+        android:src="@drawable/house"  />
+
+    <TextView
+        android:id="@+id/textView_AHS_leftHome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="80dp"
+        android:text="You have left your home 0 times today."
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.181"
+        app:layout_constraintStart_toEndOf="@+id/imageView_AHS_imgHouse"
+        app:layout_constraintTop_toBottomOf="@+id/textView_AHS_washedHands" />
+
+    <TextView
+        android:id="@+id/textView_AHS_warnBehaviorTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:text="Based on your habits, we have determined that your"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_AHS_leftHome" />
+
+    <TextView
+        android:id="@+id/textView_AHS_warnBehaviorBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="behavior is Frisky."
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_AHS_warnBehaviorTop" />
+
+    <TextView
+        android:id="@+id/textView_AHS_randomTip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="We encourage you the minimize hand-to-face contact, to wash your hands on an hourly basis, and to limit non-essential travel."
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_AHS_tips"
+        app:layout_constraintVertical_bias="0.0" />
+
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="409dp"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toTopOf="@+id/imageButton_AS_informativeTab"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_AHS_randomTip"
+        app:layout_constraintVertical_bias="0.899" />
+
+    <TextView
+        android:id="@+id/textView_AHS_tips"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tips to stay healthy:"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_AHS_warnBehaviorBottom"
+        app:layout_constraintVertical_bias="0.148" />
+
+    <ImageButton
+        android:id="@+id/button_AHS_increaseWashedHands"
+        android:layout_width="56dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="51dp"
+        android:src="@drawable/greenplus"
+        android:scaleType="fitCenter"
+        android:padding="1dp"
+        android:text="Washed Hands!"
+        app:layout_constraintBottom_toTopOf="@+id/textView_AHS_leftHome"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.427"
+        app:layout_constraintStart_toEndOf="@+id/imageView_AHS_imgHandWash"
+        app:layout_constraintTop_toBottomOf="@+id/textView_AHS_washedHands"
+        app:layout_constraintVertical_bias="0.384" />
+
+    <ImageButton
+        android:id="@+id/imageButton_AS_informativeTab"
+        android:layout_width="49dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="16dp"
+        android:text="Informative Tab"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/facetouch_hand"
+        android:scaleType="fitCenter"
+        android:padding="1dp"/>
+
+    <ImageButton
+        android:id="@+id/imageButton_AHS_settings"
+        android:layout_width="64dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="44dp"
+        android:padding="1dp"
+        android:scaleType="fitCenter"
+        android:text="Settings"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider"
+        app:layout_constraintVertical_bias="0.448"
+        app:srcCompat="@drawable/settings_gear" />
+
+    <ImageButton
+        android:id="@+id/imageButton_AHS_maps"
+        android:layout_width="55dp"
+        android:layout_height="47dp"
+        android:padding="1dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageButton_AHS_settings"
+        app:layout_constraintHorizontal_bias="0.553"
+        app:layout_constraintStart_toEndOf="@+id/imageButton_AS_informativeTab"
+        app:layout_constraintTop_toBottomOf="@+id/divider"
+        app:layout_constraintVertical_bias="0.433"
+        app:srcCompat="@drawable/map" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
