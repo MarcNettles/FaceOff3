@@ -1,4 +1,5 @@
 package com.example.faceoff3;
+package hashing;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,14 +13,48 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+
 public class MainActivity extends AppCompatActivity
 {
     public static String currentActiveUser; // Track the current active user
     public static Integer fTouches = 0;
     public static Integer washedHands = 0;
 
+    public static String algorithm = "SHA-256"; // the hashing algo to be used for user passwords
+    byte[] salt = createSalt(); // a salt to be stored in the database for each user and appended to user passwords before hashing to defend against dictionary & rainbow table attacks
 
+    private static String generateHash(String data, String algorithm) throws NoSuchAlgorithmException
+    {
+        MessageDigest digest = MessageDigest.getInstance(algorithm);
+        digest.reset();
+        digest.update(salt) // let the digest update itself with the salt
+        byte[] hash = digest.digest(data.getBytes());
+        return bytesToStringHex(hash);
+    }
 
+    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
+    public static String bytesToStringHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++)
+        {
+            int v = bytes[j] & 0xFF;
+            hexChars[j*2] = hexArray[v >>> 4];
+            hexChars[j*2+1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
+    public static byte[] createSalt()
+    {
+        byte[] bytes = new byte[20];
+        SecureRandom random = new SecureRandom();
+        random.nextBytes(bytes); // fill the bytes variable up with the next generated random bytes
+        return bytes;
+    }
     DatabaseHelper myDB; // Instance of the database
 
 
