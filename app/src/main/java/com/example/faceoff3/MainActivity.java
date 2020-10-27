@@ -21,6 +21,35 @@ public class MainActivity extends AppCompatActivity
     public static String currentActiveUser; // Track the current active user
     public static Integer fTouches = 0;
     public static Integer washedHands = 0;
+    private View.OnClickListener signIn = new View.OnClickListener()
+    {
+        @Override
+        public void onClick(View v)
+        {
+            try {
+                if (myDB.getHashedPass(edit_AM_userName.getText().toString()).equals(  // if the hashed password in the db equals
+                        // what you get when you compute the hash again using the input password and the salt stored in the db
+                        generateSaltedHash(edit_AM_password.getText().toString(),"SHA-256", myDB.getSalt(edit_AM_userName.getText().toString()))))
+                {
+                    // then sign the user in
+                    Toast.makeText(MainActivity.this, "Signed in", Toast.LENGTH_LONG).show();
+                    /*This bit is used to set the Logged In As text and set the Activity variable currentActiveUser*/
+                    textView_AM_activeUser.setText(edit_AM_userName.getText().toString());
+                    currentActiveUser = edit_AM_userName.getText().toString();
+                    fTouches = myDB.getfTouches(currentActiveUser);
+                    //Intent intent = new Intent(MainActivity.this, informativeTabActivity.class);
+                    Intent intent = new Intent(MainActivity.this, HomeScreenActivity.class);
+                    startActivity(intent);
+                }
+                else
+                {
+                    Toast.makeText(MainActivity.this, "Username and password do not match", Toast.LENGTH_LONG).show();
+                }
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+        }
+    };
     String saltedHashedPass;
 
     public boolean computeSaltedHash(String password, boolean creatingAccount) throws Exception
@@ -175,7 +204,8 @@ public class MainActivity extends AppCompatActivity
                             if(isInserted == true)
                             {
                                 Toast.makeText(MainActivity.this, "Account Created", Toast.LENGTH_LONG).show();
-                            }                                               // maybe have ^this code block also sign you in when you create a new account
+                                signIn.onClick(v);
+                            }                                               // This code block also signs you in
                             else
                             {
                                 Toast.makeText(MainActivity.this, "Username unavailable", Toast.LENGTH_LONG).show();
@@ -191,38 +221,7 @@ public class MainActivity extends AppCompatActivity
     /* Creating the Sign In Button */
     public void AM_signIn()
     {
-        button_AM_signIn.setOnClickListener // Sign In is listening for a click
-            (
-                new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        try {
-                            if (myDB.getHashedPass(edit_AM_userName.getText().toString()).equals(  // if the hashed password in the db equals
-                                    // what you get when you compute the hash again using the input password and the salt stored in the db
-                                    generateSaltedHash(edit_AM_password.getText().toString(),"SHA-256", myDB.getSalt(edit_AM_userName.getText().toString()))))
-                            {
-                                // then sign the user in
-                                Toast.makeText(MainActivity.this, "Signed in", Toast.LENGTH_LONG).show();
-                                /*This bit is used to set the Logged In As text and set the Activity variable currentActiveUser*/
-                                textView_AM_activeUser.setText(edit_AM_userName.getText().toString());
-                                currentActiveUser = edit_AM_userName.getText().toString();
-                                fTouches = myDB.getfTouches(currentActiveUser);
-                                //Intent intent = new Intent(MainActivity.this, informativeTabActivity.class);
-                                Intent intent = new Intent(MainActivity.this, HomeScreenActivity.class);
-                                startActivity(intent);
-                            }
-                            else
-                            {
-                                Toast.makeText(MainActivity.this, "Username and password do not match", Toast.LENGTH_LONG).show();
-                            }
-                        } catch (NoSuchAlgorithmException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            );
+        button_AM_signIn.setOnClickListener(signIn); // Sign In is listening for a click
     }
 
 
