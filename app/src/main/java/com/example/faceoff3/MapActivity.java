@@ -3,6 +3,7 @@ package com.example.faceoff3;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -32,6 +33,16 @@ public class MapActivity extends AppCompatActivity
         mapView_AMap_map = (MapView)findViewById(R.id.mapView_AMap_map);
 
         mapView_AMap_map.getMapAsync(mapView_AMap_map_CallBack);
+
+
+        /* initialize map fragment */
+        Fragment fragment = new MapFragment();
+
+        /* open fragment */
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.frame_layout, fragment)
+                .commit();
 
     }
 

@@ -2,6 +2,7 @@ package com.example.faceoff3;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -152,6 +153,7 @@ public class MainActivity extends AppCompatActivity
         /* Here we have to call the functions we create below.*/
         AM_createAccount();
         AM_signIn();
+
 
 
     }
