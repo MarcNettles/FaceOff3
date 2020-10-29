@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity
             try {
                 if (myDB.getHashedPass(edit_AM_userName.getText().toString()).equals(  // if the hashed password in the db equals
                         // what you get when you compute the hash again using the input password and the salt stored in the db
-                        generateSaltedHash(edit_AM_password.getText().toString(),"SHA-256", myDB.getSalt(edit_AM_userName.getText().toString()))))
+                        computeSaltedHash(edit_AM_password.getText().toString(),"SHA-256", myDB.getSalt(edit_AM_userName.getText().toString()))))
                 {
                     // then sign the user in
                     Toast.makeText(MainActivity.this, "Signed in", Toast.LENGTH_LONG).show();
@@ -50,58 +50,55 @@ public class MainActivity extends AppCompatActivity
             }
         }
     };
-    String saltedHashedPass;
 
-    public boolean computeSaltedHash(String password, boolean creatingAccount) throws Exception
+    public static String saltedHashedPass;  // to be inserted into the db on new account creation
+    byte[] salt = new byte[20];
+
+    /* for new users, generates a salt and salted hash of users' passwords to be saved in the db */
+    public void generateSaltedHash(String password) throws Exception
     {
-        // checks if user exists in db, if not, generate and save the salt and salted hash
-        // if user already exists (i.e., if user is just signing in, not creating a new account,
-        // then pull the salt
         String algorithm = "SHA-256"; // the hashing algorithm to be used for user passwords
 
-        if (creatingAccount == true)
-        {
-            // a salt to be stored in the database for each user and appended to user passwords before
-            // hashing to defend against dictionary & rainbow table attacks
-            salt = createSalt();
+        salt = createSalt(); // a salt to be stored in the database for each user and appended to user passwords
+        // before hashing to defend against dictionary & rainbow table attacks
 
-            // call generateSaltedHash to get a password that is safe to store in the db
-            saltedHashedPass = generateSaltedHash(password, algorithm, salt);
-            return true;
-        }
-        else // when account already exists just verify user's entries for username and pass
-        {
-            myDB.findUser(edit_AM_userName.getText().toString(), edit_AM_password.getText().toString());
-        }
-        return false;
+        // call computeSaltedHash to get a password that is now safer to store in the db
+        saltedHashedPass = computeSaltedHash(password, algorithm, salt);
     }
 
-
-    private static String generateSaltedHash(String data, String algorithm, byte[] salt) throws NoSuchAlgorithmException
+    /* for authenticating users whose accounts have already been created/are already in the db */
+    private static String computeSaltedHash(String password, String algorithm, byte[] salt) throws NoSuchAlgorithmException
     {
         MessageDigest digest = MessageDigest.getInstance(algorithm);
         digest.reset();
-        digest.update(salt); // let the digest update itself with the salt
-        byte[] hash = digest.digest(data.getBytes());
+        digest.update(salt); // have the digest/hash function update itself with the salt
+        byte[] hash = digest.digest(password.getBytes());;
+        String hashAsString;
+        for (int i = 0; i < 4999; i++) { // going off what ECEN 4133 textbook Security Engineering (2020) says, that "in modern Linux distributions,
+            hashAsString = bytesToStringHex(hash); // passwords are salted, hashed using 5000 rounds of SHA-512, and stored in a file
+            hash = digest.digest(hashAsString.getBytes()); // that only the root user can read." SHA-512 gives me errors so just using SHA-256
+        }
         return bytesToStringHex(hash);
     }
 
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
+    /* takes in hash as byte array and turns it into a string of hex chars */
     public static String bytesToStringHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++)
         {
-            int v = bytes[j] & 0xFF;
-            hexChars[j*2] = hexArray[v >>> 4];
-            hexChars[j*2+1] = hexArray[v & 0x0F];
+            int v = bytes[j] & 0xFF;              // convert each byte to an int
+            hexChars[j*2] = hexArray[v >>> 4];    // even indices will be the hex char corresponding 4 most-significant bits
+            hexChars[j*2+1] = hexArray[v & 0x0F]; // odd indices will be the hex char corresponding to the 4 least-significant bits
         }
         return new String(hexChars);
     }
 
+    /* only used the first time the user creates their account, called by function generateSaltedHash */
     public static byte[] createSalt()
     {
-        byte[] bytes = new byte[20];
+        byte[] bytes = new byte[20]; // we'll have a salt that is 20 bytes of pseudo-randomness
         SecureRandom random = new SecureRandom();
         random.nextBytes(bytes); // fill the bytes variable up with the next generated random bytes
         return bytes;
@@ -116,7 +113,7 @@ public class MainActivity extends AppCompatActivity
 
     EditText edit_AM_userName, edit_AM_password, edit_AM_passwordConfirm, edit_AM_firstName, edit_AM_lastName;
 
-    byte[] salt = new byte[20];
+
 
 
     Button button_AM_signIn, button_AM_createAccount;
@@ -190,10 +187,9 @@ public class MainActivity extends AppCompatActivity
                         /* If all is good, insert the data */
                         else
                         {
-                            // here we will compute the salted hash of the user's chosen password,
-                            // and prepare it and the salt to be stored in the database
+                            /* here we will generate a salted hash of the user's chosen password and prepare for it and the salt to be stored in the database */
                             try {
-                                computeSaltedHash(edit_AM_password.getText().toString(), true);// pw is now salted and hashed
+                                generateSaltedHash(edit_AM_password.getText().toString());// pw is now salted and hashed
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -223,6 +219,7 @@ public class MainActivity extends AppCompatActivity
     {
         button_AM_signIn.setOnClickListener(signIn); // Sign In is listening for a click
     }
+
 
 
 
