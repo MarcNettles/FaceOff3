@@ -1,5 +1,6 @@
 package com.example.faceoff3;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,6 +15,12 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.data.geojson.GeoJsonLayer;
+import com.google.maps.android.data.geojson.GeoJsonPolygonStyle;
+
+import org.json.JSONException;
+
+import java.io.IOException;
 
 
 public class MapFragment extends Fragment {
@@ -33,6 +40,15 @@ public class MapFragment extends Fragment {
             @Override
             public void onMapReady(final GoogleMap googleMap) {
                 /* when map is loaded */
+                try {
+                    GeoJsonLayer layer = new GeoJsonLayer(googleMap, R.raw.covid19cases, getContext());
+                    GeoJsonPolygonStyle polyStyle = layer.getDefaultPolygonStyle();
+                    polyStyle.setStrokeColor(Color.CYAN);
+                    polyStyle.setStrokeWidth(2);
+                    layer.addLayerToMap();
+                } catch (IOException e) {
+                } catch (JSONException e) {
+                }
                 googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng latLng) {
@@ -61,4 +77,5 @@ public class MapFragment extends Fragment {
         /* return view */
         return view;
     }
+
 }
