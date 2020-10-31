@@ -1,8 +1,10 @@
 package com.example.faceoff3;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -26,6 +28,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Objects;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -45,17 +49,41 @@ import com.google.maps.android.data.geojson.GeoJsonPolygonStyle;
 
 public class MapFragment extends Fragment {
     private GoogleMap mMap;
+    private final static String mLogTag = "GeoJsonLayers";
+    public String countyCode = "";
+    public GeoJsonLayer layer2;
+    public HashMap<String, String> countyCodeMap = new HashMap<>();
 
-    private void retrieveFileFromUrl() {
-        new DownloadGeoJsonFile().execute(getString(R.string.geojson_url));
+
+    /* this function pulls the county polygons from the 2010 Census GeoJSON on-device resource */
+    private void retrieveFileFromResource() {
+        try {
+            layer2 = new GeoJsonLayer(mMap, R.raw.census2010counties20m, Objects.requireNonNull(getContext()));
+
+        } catch (IOException e) {
+            Log.e(mLogTag, "GeoJSON file could not be read");
+        } catch (JSONException e) {
+            Log.e(mLogTag, "GeoJSON file could not be converted to a JSONObject");
+        }
     }
 
-    private class DownloadGeoJsonFile extends AsyncTask<String, Void, GeoJsonLayer> {
-        private final static String mLogTag = "GeoJsonDemo";
+
+    /* these next two functions pull live COVID-19 data from URL stored in /res/values/strings.xml */
+    private void retrieveCovidFileFromUrl() {
+        new DownloadCovidGeoJsonFile().execute(getString(R.string.covid_geojson_url));
+    }
+
+    private void retrieveCountyFileFromUrl() {
+        new DownloadCountyGeoJsonFile().execute(getString(R.string.county_geojson_url));
+    }
+
+    private class DownloadCovidGeoJsonFile extends AsyncTask<String, Void, GeoJsonLayer> {
+
 
         @Override
         protected GeoJsonLayer doInBackground(String... params) {
             try {
+
                 // Open a stream from the URL
                 InputStream stream = new URL(params[0]).openStream();
 
@@ -84,7 +112,58 @@ public class MapFragment extends Fragment {
         @Override
         protected void onPostExecute(GeoJsonLayer layer) {
             if (layer != null) {
-                addGeoJsonLayerToMap(layer);
+               addGeoJsonLayerToMap(layer);
+            }
+        }
+    }
+    private class DownloadCountyGeoJsonFile extends AsyncTask<String, Void, GeoJsonLayer> {
+
+
+        @Override
+        protected GeoJsonLayer doInBackground(String... params) {
+
+            try {
+
+                // Open a stream from the URL
+                InputStream stream = new URL(params[0]).openStream();
+
+                String line;
+                String keyString;
+
+                // StringBuilder result = new StringBuilder();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+
+                while ((line = reader.readLine()) != null) {
+                    // Read and save each line of the stream
+                    if (line.contains("0500000US")) { // find the county code in the county geojson
+                        keyString = line.substring((line.indexOf("0500000US") + 9), (line.indexOf("0500000US") + 14));  // this should grab the 5 numbers right after the indexed "0500000US" portion of the string
+                        countyCodeMap.put(keyString, line.substring(0, line.length() - 1)); // put this key value pair in the hashMap countyCodeMap, chopping the last comma off each line beforehand
+                    }
+                }
+                // line = line.substring(0, line.length() - 1);  // chop off the last character (a comma)
+
+                line = countyCodeMap.get(countyCode);
+                line = "{\n" +
+                        "\"type\": \"FeatureCollection\",\n" +
+                        "\"features\": [\n" + line + "]\n" +
+                        "}\n";                                // make the single line match a valid GeoJSON file
+
+                // Close the stream
+                reader.close();
+                stream.close();
+
+                return new GeoJsonLayer(mMap, new JSONObject(line));
+            } catch (IOException e) {
+                Log.e(mLogTag, "GeoJSON file could not be read");
+            } catch (JSONException e) {
+                Log.e(mLogTag, "GeoJSON file could not be converted to a JSONObject");
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(GeoJsonLayer layer) {
+            if (layer != null) {
+                layer.addLayerToMap();
             }
         }
     }
@@ -93,26 +172,37 @@ public class MapFragment extends Fragment {
 
         addColorsToMarkers(layer);
         layer.addLayerToMap();
-        // Demonstrate receiving features via GeoJsonLayer clicks.
+
+        // receiving features via GeoJsonLayer clicks.
         layer.setOnFeatureClickListener(new GeoJsonLayer.GeoJsonOnFeatureClickListener() {
             @Override
-            public void onFeatureClick(Feature feature) {
+            public void onFeatureClick(Feature feature) {   // TODO: this is apparently where a problem is that keeps the map from registering more than 1 county-boundary drawing click. What should be expected from this function onFeatureClick?
+                countyCode = feature.getProperty("FIPS");
+
                 String recommendation = "";
-                /* right now this is just the calculation as below in the magnitudeToColor function,
-                * but in the future we can change it to incorporate the user's current face-touching
-                * to hand-washing ratio, to give a more tailored recommendation to the user */
+                /* right now this is the same calculation as below in the magnitudeToColor function,
+                 * but in the future we can change it to incorporate the user's current face-touching
+                 * to hand-washing ratio, to give a more tailored recommendation to the user */
                 if (Double.parseDouble(feature.getProperty("Incident_Rate")) < 2000) {
-                    recommendation = "exercise caution";
+                    recommendation = "exercise caution in this area";
                 } else if (Double.parseDouble(feature.getProperty("Incident_Rate")) < 4000) {
-                    recommendation = "exercise great caution";
+                    recommendation = "exercise exaggerated caution in this area";
                 } else if (Double.parseDouble(feature.getProperty("Incident_Rate")) < 6000) {
-                    recommendation = "exercise extreme caution";
+                    recommendation = "exercise extreme caution in this area";
                 } else {
-                    recommendation = "avoid travel to this county";
+                    recommendation = "avoid unnecessary travel to or within this area";
                 }
+
+                retrieveCountyFileFromUrl();
+
                 Toast.makeText(getActivity().getApplicationContext(),
-                        "Recommendation: " + recommendation,
-                        Toast.LENGTH_SHORT).show();
+                        "Based on your habits, FaceOff recommends that you " + recommendation,
+                        Toast.LENGTH_LONG).show();// TODO: seems like this only gets called once and done
+
+                /* this is where we'll add and remove each county's GeoJSON layer */
+             /*   if ((feature.getProperty("STATE") + feature.getProperty("COUNTY")).equals(feature.getProperty("FIPS"))) {
+
+                }*/
             }
 
         });
@@ -167,7 +257,10 @@ public class MapFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         /* get latest COVID-19 data */
-        retrieveFileFromUrl();
+        retrieveCovidFileFromUrl();
+
+        /* get the county polygons from the 2010 Census GeoJSON */
+   //     retrieveFileFromResource();
 
         /* Initialize view */
         View view = inflater.inflate(R.layout.fragment_map, container, false);
@@ -182,6 +275,17 @@ public class MapFragment extends Fragment {
             public void onMapReady(final GoogleMap googleMap) {
                 /* when map is loaded */
                 mMap = googleMap;
+/*
+
+
+                String geoURI = "geo:40.014,-105.271?z=8";
+                Uri geo = Uri.parse(geoURI);
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, geo);
+                startActivity(mapIntent);
+
+
+*/
+
                 if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
