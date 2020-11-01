@@ -297,6 +297,11 @@ public class MapFragment extends Fragment {
                     return;
                 }
                 mMap.setMyLocationEnabled(true);
+
+
+
+
+
 /*                try {
                     GeoJsonLayer layer = new GeoJsonLayer(mMap, R.raw.covid19cases, getContext());
                     GeoJsonPolygonStyle polyStyle = layer.getDefaultPolygonStyle();
@@ -311,7 +316,7 @@ public class MapFragment extends Fragment {
                 } catch (IOException e) {
                 } catch (JSONException e) {
                 }*/
-                googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng latLng) {
                         /* when clicked on map */
