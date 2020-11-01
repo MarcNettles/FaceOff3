@@ -7,12 +7,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +26,10 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -33,24 +39,21 @@ import static com.example.faceoff3.Constants.ERROR_DIALOG_REQUEST;
 import static com.example.faceoff3.Constants.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
 import static com.example.faceoff3.Constants.PERMISSIONS_REQUEST_ENABLE_GPS;
 
-public class MainActivity extends AppCompatActivity
-{
+public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     public static String currentActiveUser; // Track the current active user
     public static Integer fTouches = 0;
     public static Integer washedHands = 0;
     private boolean mLocationPermissionGranted = false;
+    private FusedLocationProviderClient mFusedLocationClient;
 
-    private View.OnClickListener signIn = new View.OnClickListener()
-    {
+    private View.OnClickListener signIn = new View.OnClickListener() {
         @Override
-        public void onClick(View v)
-        {
+        public void onClick(View v) {
             try {
                 if (myDB.getHashedPass(edit_AM_userName.getText().toString()).equals(  // if the hashed password in the db equals
                         // what you get when you compute the hash again using the input password and the salt stored in the db
-                        computeSaltedHash(edit_AM_password.getText().toString(),"SHA-256", myDB.getSalt(edit_AM_userName.getText().toString()))))
-                {
+                        computeSaltedHash(edit_AM_password.getText().toString(), "SHA-256", myDB.getSalt(edit_AM_userName.getText().toString())))) {
                     // then sign the user in
                     Toast.makeText(MainActivity.this, "Signed in", Toast.LENGTH_LONG).show();
                     /*This bit is used to set the Logged In As text and set the Activity variable currentActiveUser*/
@@ -60,9 +63,7 @@ public class MainActivity extends AppCompatActivity
                     //Intent intent = new Intent(MainActivity.this, informativeTabActivity.class);
                     Intent intent = new Intent(MainActivity.this, HomeScreenActivity.class);
                     startActivity(intent);
-                }
-                else
-                {
+                } else {
                     Toast.makeText(MainActivity.this, "Username and password do not match", Toast.LENGTH_LONG).show();
                 }
             } catch (NoSuchAlgorithmException e) {
@@ -75,8 +76,7 @@ public class MainActivity extends AppCompatActivity
     byte[] salt = new byte[20];
 
     /* for new users, generates a salt and salted hash of users' passwords to be saved in the db */
-    public void generateSaltedHash(String password) throws Exception
-    {
+    public void generateSaltedHash(String password) throws Exception {
         String algorithm = "SHA-256"; // the hashing algorithm to be used for user passwords
 
         salt = createSalt(); // a salt to be stored in the database for each user and appended to user passwords
@@ -87,12 +87,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     /* for authenticating users whose accounts have already been created/are already in the db */
-    private static String computeSaltedHash(String password, String algorithm, byte[] salt) throws NoSuchAlgorithmException
-    {
+    private static String computeSaltedHash(String password, String algorithm, byte[] salt) throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance(algorithm);
         digest.reset();
         digest.update(salt); // have the digest/hash function update itself with the salt
-        byte[] hash = digest.digest(password.getBytes());;
+        byte[] hash = digest.digest(password.getBytes());
+        ;
         String hashAsString;
         for (int i = 0; i < 4999; i++) { // going off what ECEN 4133 textbook Security Engineering (2020) says, that "in modern Linux distributions,
             hashAsString = bytesToStringHex(hash); // passwords are salted, hashed using 5000 rounds of SHA-512, and stored in a file
@@ -106,18 +106,16 @@ public class MainActivity extends AppCompatActivity
     /* takes in hash as byte array and turns it into a string of hex chars */
     public static String bytesToStringHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++)
-        {
+        for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;              // convert each byte to an int
-            hexChars[j*2] = hexArray[v >>> 4];    // even indices will be the hex char corresponding 4 most-significant bits
-            hexChars[j*2+1] = hexArray[v & 0x0F]; // odd indices will be the hex char corresponding to the 4 least-significant bits
+            hexChars[j * 2] = hexArray[v >>> 4];    // even indices will be the hex char corresponding 4 most-significant bits
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F]; // odd indices will be the hex char corresponding to the 4 least-significant bits
         }
         return new String(hexChars);
     }
 
     /* only used the first time the user creates their account, called by function generateSaltedHash */
-    public static byte[] createSalt()
-    {
+    public static byte[] createSalt() {
         byte[] bytes = new byte[20]; // we'll have a salt that is 20 bytes of pseudo-randomness
         SecureRandom random = new SecureRandom();
         random.nextBytes(bytes); // fill the bytes variable up with the next generated random bytes
@@ -134,33 +132,32 @@ public class MainActivity extends AppCompatActivity
     EditText edit_AM_userName, edit_AM_password, edit_AM_passwordConfirm, edit_AM_firstName, edit_AM_lastName;
 
 
-
-
     Button button_AM_signIn, button_AM_createAccount;
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         myDB = new DatabaseHelper(this);  // Get the new instance of the DB, this may need to be taken out of onCreate if it poses a problem.
         //myDB.insertOne();
         myDB.fillTipTable("informativeTips");
 
         /* Here we link the variables above to their activity_main (AM) items */
-        textView_AM_activeUser = (TextView)findViewById(R.id.textView_AM_activeUser);
+        textView_AM_activeUser = (TextView) findViewById(R.id.textView_AM_activeUser);
 
-        edit_AM_userName = (EditText)findViewById(R.id.edit_AM_userName);
-        edit_AM_password = (EditText)findViewById(R.id.edit_AM_password);
+        edit_AM_userName = (EditText) findViewById(R.id.edit_AM_userName);
+        edit_AM_password = (EditText) findViewById(R.id.edit_AM_password);
 
-        edit_AM_passwordConfirm = (EditText)findViewById(R.id.edit_AM_passwordConfirm);
-        edit_AM_firstName = (EditText)findViewById(R.id.edit_AM_firstName);
-        edit_AM_lastName = (EditText)findViewById(R.id.edit_AM_lastName);
+        edit_AM_passwordConfirm = (EditText) findViewById(R.id.edit_AM_passwordConfirm);
+        edit_AM_firstName = (EditText) findViewById(R.id.edit_AM_firstName);
+        edit_AM_lastName = (EditText) findViewById(R.id.edit_AM_lastName);
 
-        button_AM_signIn = (Button)findViewById(R.id.button_AM_signIn);
+        button_AM_signIn = (Button) findViewById(R.id.button_AM_signIn);
         button_AM_createAccount = (Button) findViewById(R.id.button_AM_createAccount);
 
 
@@ -172,9 +169,27 @@ public class MainActivity extends AppCompatActivity
         /* Here we have to call the functions we create below.*/
         AM_createAccount();
         AM_signIn();
+        getLastKnownLocation();
 
 
+    }
 
+    private void getLastKnownLocation() {
+        Log.d(TAG, "getLastKnownLocation: called");
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+                if(task.isSuccessful()){
+                    Location location = task.getResult();
+        //            GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude()); // might not use this later, so can remove later
+                    Log.d(TAG, "onComplete: latitude: " + location.getLatitude()); // this could just be changed to location.getLatitude() and location.getLongitude if not using GeoPoint later
+                    Log.d(TAG, "onComplete: longitude: " + location.getLongitude()); // ( this was geoPoint.getLatitude() )
+                }
+            }
+        });
     }
 
     private boolean checkMapServices(){
@@ -223,6 +238,7 @@ public class MainActivity extends AppCompatActivity
                 == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
             AM_createAccount();  // continue on to the app
+            getLastKnownLocation();
         } else { // this will actually ask the user for permissions
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
@@ -279,6 +295,7 @@ public class MainActivity extends AppCompatActivity
             case PERMISSIONS_REQUEST_ENABLE_GPS: { // this case is a const in the Constants.java file
                 if(mLocationPermissionGranted){ // then we go on to use the application as intended
                     AM_createAccount();
+                    getLastKnownLocation();
                 }
                 else{
                     getLocationPermission();
@@ -295,6 +312,7 @@ public class MainActivity extends AppCompatActivity
         if (checkMapServices()){
             if(mLocationPermissionGranted){
                 AM_createAccount();
+                getLastKnownLocation();
             }
             else {
                 getLocationPermission();
@@ -346,6 +364,7 @@ public class MainActivity extends AppCompatActivity
                             if(isInserted == true)
                             {
                                 Toast.makeText(MainActivity.this, "Account Created", Toast.LENGTH_LONG).show();
+                                getLastKnownLocation();
                                 signIn.onClick(v);
                             }                                               // This code block also signs you in
                             else
@@ -364,6 +383,7 @@ public class MainActivity extends AppCompatActivity
     public void AM_signIn()
     {
         button_AM_signIn.setOnClickListener(signIn); // Sign In is listening for a click
+        getLastKnownLocation();
     }
 
 

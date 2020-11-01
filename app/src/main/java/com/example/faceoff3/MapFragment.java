@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.maps.android.data.Feature;
 import com.google.maps.android.data.geojson.GeoJsonFeature;
 import com.google.maps.android.data.geojson.GeoJsonLayer;
@@ -53,6 +55,9 @@ public class MapFragment extends Fragment {
     public String countyCode = "";
     public GeoJsonLayer layer2;
     public HashMap<String, String> countyCodeMap = new HashMap<>();
+    private LatLngBounds mMapBoundary;
+    private Location mUserPosition;
+
 
 
     /* this function pulls the county polygons from the 2010 Census GeoJSON on-device resource */
@@ -275,30 +280,22 @@ public class MapFragment extends Fragment {
             public void onMapReady(final GoogleMap googleMap) {
                 /* when map is loaded */
                 mMap = googleMap;
-/*
-
-
-                String geoURI = "geo:40.014,-105.271?z=8";
-                Uri geo = Uri.parse(geoURI);
-                Intent mapIntent = new Intent(Intent.ACTION_VIEW, geo);
-                startActivity(mapIntent);
-
-
-*/
 
                 if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
                     return;
                 }
                 mMap.setMyLocationEnabled(true);
+                //setCameraView();
+//                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation ));
 
 
+
+
+                LatLngBounds coloradoBounds = new LatLngBounds(
+                        new LatLng(37.20, -109.00), // SW bounds
+                        new LatLng(41.73, -100.99)  // NE bounds
+                );
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coloradoBounds.getCenter(), 8));
 
 
 
@@ -346,6 +343,21 @@ public class MapFragment extends Fragment {
         /* return view */
         return view;
     }
+
+/*    private void setCameraView(){
+        double bottomBoundary = mUserPosition.getLatitude() - .1;
+        double leftBoundary = mUserPosition.getLongitude() - .1;
+        double topBoundary = mUserPosition.getLatitude() + .1;
+        double rightBoundary = mUserPosition.getLongitude() + .1;
+
+        mMapBoundary = new LatLngBounds(
+                new LatLng(bottomBoundary, leftBoundary),
+                new LatLng(topBoundary, rightBoundary)
+        );
+
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mMapBoundary, 10));
+    }*/
 
     //protected GoogleMap getMap() {
       //  return mMap;
