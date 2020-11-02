@@ -1,27 +1,32 @@
 package com.example.faceoff3;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.RectangularBounds;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.maps.android.data.Feature;
 import com.google.maps.android.data.geojson.GeoJsonFeature;
 import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.google.maps.android.data.geojson.GeoJsonPointStyle;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,26 +35,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import androidx.fragment.app.FragmentActivity;
 
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.maps.android.data.geojson.GeoJsonPolygonStyle;
 
 
-public class MapFragment extends Fragment {
+public class MapsActivity extends FragmentActivity {
+    private static final String TAG = "MapsActivity";
     private GoogleMap mMap;
     private final static String mLogTag = "GeoJsonLayers";
     public String countyCode = "";
@@ -59,11 +60,10 @@ public class MapFragment extends Fragment {
     private Location mUserPosition;
 
 
-
     /* this function pulls the county polygons from the 2010 Census GeoJSON on-device resource */
     private void retrieveFileFromResource() {
         try {
-            layer2 = new GeoJsonLayer(mMap, R.raw.census2010counties20m, Objects.requireNonNull(getContext()));
+            layer2 = new GeoJsonLayer(mMap, R.raw.census2010counties20m, Objects.requireNonNull(this));
 
         } catch (IOException e) {
             Log.e(mLogTag, "GeoJSON file could not be read");
@@ -117,10 +117,11 @@ public class MapFragment extends Fragment {
         @Override
         protected void onPostExecute(GeoJsonLayer layer) {
             if (layer != null) {
-               addGeoJsonLayerToMap(layer);
+                addGeoJsonLayerToMap(layer);
             }
         }
     }
+
     private class DownloadCountyGeoJsonFile extends AsyncTask<String, Void, GeoJsonLayer> {
 
 
@@ -165,6 +166,7 @@ public class MapFragment extends Fragment {
             }
             return null;
         }
+
         @Override
         protected void onPostExecute(GeoJsonLayer layer) {
             if (layer != null) {
@@ -200,7 +202,7 @@ public class MapFragment extends Fragment {
 
                 retrieveCountyFileFromUrl();
 
-                Toast.makeText(getActivity().getApplicationContext(),
+                Toast.makeText(getApplicationContext(),
                         "Based on your habits, FaceOff recommends that you " + recommendation,
                         Toast.LENGTH_LONG).show();// TODO: seems like this only gets called once and done
 
@@ -258,30 +260,28 @@ public class MapFragment extends Fragment {
         }
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        /* get latest COVID-19 data */
-        retrieveCovidFileFromUrl();
 
-        /* get the county polygons from the 2010 Census GeoJSON */
-   //     retrieveFileFromResource();
-
-        /* Initialize view */
-        View view = inflater.inflate(R.layout.fragment_map, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
+        // Obtain the supportMapFragment and get notified when the map is ready to be used
 
         /* Initialize map fragment */
-        SupportMapFragment supportMapFragment = (SupportMapFragment)
-                getChildFragmentManager().findFragmentById(R.id.google_map);
-
-        /* Async map */
-        supportMapFragment.getMapAsync(new OnMapReadyCallback() {
+        SupportMapFragment mapFragment = (SupportMapFragment)
+                getSupportFragmentManager().findFragmentById(R.id.google_map);
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
-            public void onMapReady(final GoogleMap googleMap) {
+            public void onMapReady(GoogleMap googleMap) {
                 /* when map is loaded */
                 mMap = googleMap;
 
-                if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                /* get latest COVID-19 data */
+                retrieveCovidFileFromUrl();
+
+                /* get the county polygons from the 2010 Census GeoJSON */
+                //     retrieveFileFromResource();
+
+                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
                 mMap.setMyLocationEnabled(true);
@@ -289,11 +289,9 @@ public class MapFragment extends Fragment {
 //                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation ));
 
 
-
-
                 LatLngBounds coloradoBounds = new LatLngBounds(
-                        new LatLng(37.20, -109.00), // SW bounds
-                        new LatLng(41.73, -100.99)  // NE bounds
+                        new LatLng(37.30, -109.00), // SW bounds
+                        new LatLng(41.83, -100.99)  // NE bounds
                 );
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coloradoBounds.getCenter(), 8));
 
@@ -340,9 +338,54 @@ public class MapFragment extends Fragment {
             }
         });
 
-        /* return view */
-        return view;
+            String apiKey = getString(R.string.api_key);
+
+            if(!Places.isInitialized()){
+                Places.initialize(getApplicationContext(), apiKey);
+            }
+
+            PlacesClient placesClient = Places.createClient(getApplicationContext());
+
+            // Initialize the AutocompleteSupportFragment.
+            AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                    getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+
+
+            autocompleteFragment.setLocationBias(RectangularBounds.newInstance(
+                    new LatLng(37.20, -109.00), // SW bounds
+                    new LatLng(41.73, -100.99)  // NE bounds
+            ));
+
+            autocompleteFragment.setCountries("US");
+
+            // Specify the types of place data to return.
+    autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+
+            // Set up a PlaceSelectionListener to handle the response.
+    autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+                @Override
+                public void onPlaceSelected(@NotNull Place place) {
+                    // TODO: Get info about the selected place.
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 10));    // TODO: why doesn't this work? also, the new autocomplete search bar is hiding the myLocation button
+                    Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+                }
+
+
+                @Override
+                public void onError(@NotNull Status status) {
+                    // TODO: Handle the error.
+                    Log.i(TAG, "An error occurred: " + status);
+                }
+            });
+
+
+
+
+
     }
+}
+
+
 
 /*    private void setCameraView(){
         double bottomBoundary = mUserPosition.getLatitude() - .1;
@@ -363,4 +406,3 @@ public class MapFragment extends Fragment {
       //  return mMap;
     //}
 
-}
