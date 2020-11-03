@@ -103,7 +103,7 @@
 
     <TextView
         android:id="@+id/textView_AHS_randomTip"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="We encourage you the minimize hand-to-face contact, to wash your hands on an hourly basis, and to limit non-essential travel."
         app:layout_constraintBottom_toBottomOf="parent"
@@ -194,36 +194,5 @@
         app:layout_constraintTop_toBottomOf="@+id/divider"
         app:layout_constraintVertical_bias="0.433"
         app:srcCompat="@drawable/map" />
-
-    <ImageView
-        android:id="@+id/imageView_AHS_tamagochi"
-        android:layout_width="118dp"
-        android:layout_height="64dp"
-        android:layout_marginStart="166dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="166dp"
-        android:layout_marginBottom="42dp"
-        app:layout_constraintBottom_toTopOf="@+id/divider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.512"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_AHS_randomTip"
-        app:srcCompat="@drawable/happy_cell" />
-
-    <ImageButton
-        android:id="@+id/imageButton_AHS_increaseFaceTouches"
-        android:layout_width="56dp"
-        android:layout_height="41dp"
-        android:layout_marginStart="142dp"
-        android:layout_marginTop="7dp"
-        android:layout_marginEnd="123dp"
-        android:layout_marginBottom="21dp"
-        android:padding="1dp"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toTopOf="@+id/textView_AHS_washedHands"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView_AHS_imgFacePalm"
-        app:layout_constraintTop_toBottomOf="@+id/textView_AHS_touchedFace"
-        app:srcCompat="@drawable/greenplus" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

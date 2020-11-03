@@ -32,7 +32,6 @@ public class DatabaseHelper extends SQLiteOpenHelper
     public static final String COL_FTOUCHES = "fTouches";
     public static final String COL_WASHEDHANDS_DAILYCOUNT = "washedHandsDailyCount";
     public static final String COL_WASHEDHANDS_MONTHLYCOUNT = "washedHandsMonthlyCount";
-    public static final String COL_SALT = "salt";
     //public static final String;
 
     /*Table informativeTips: columns*/
@@ -50,11 +49,11 @@ public class DatabaseHelper extends SQLiteOpenHelper
     @Override
     public void onCreate(SQLiteDatabase db)
     {
+        db.execSQL("create table " + USER_TABLE + " (userName text primary key, password text, firstName text, lastName text, fTouches integer)");
 
         /*Informative Tab: tip table creation*/
         db.execSQL("create table "+ INFORMATIVE_TIPS + " (id integer primary key, tip text)");
 
-        db.execSQL("create table " + USER_TABLE + " (userName text primary key, password text, firstName text, lastName text, fTouches integer, salt blob)");
         /* This doesn't work, I'm not sure why yet */
         //fillTipTable(INFORMATIVE_TIPS);
     }
@@ -74,7 +73,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     * Here are the important functions so far. InsertData() is used to create new users. DO NOT USE for updating fTouches, use the updateData()!!! Thank you :)
     *
     * */
-    public boolean insertData(String userName, String password, String firstName, String lastName, Integer fTouches, byte[] salt)
+    public boolean insertData(String userName, String password, String firstName, String lastName, Integer fTouches)
     {
         SQLiteDatabase db = this.getWritableDatabase(); // or we could use .getReadableDatabase(); which is used in case the database isn't currently writeable.
         ContentValues contentValues = new ContentValues(); // We use the content values to .put() the data we want to insert into the right columns.
@@ -85,7 +84,6 @@ public class DatabaseHelper extends SQLiteOpenHelper
         contentValues.put(COL_FIRSTNAME, firstName);
         contentValues.put(COL_LASTNAME, lastName);
         contentValues.put(COL_FTOUCHES, fTouches);
-        contentValues.put(COL_SALT, salt);
 
         long result = db.insert(USER_TABLE, null, contentValues); // Either the data is insert or it is not, db.insert() returns -1 if it did not insert successfully, otherwise it returns how many rows were affected.
 
@@ -368,51 +366,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
     }
 
-    public byte[] getSalt(String userID)
-    {
-        SQLiteDatabase db = this.getWritableDatabase();
-        byte[] returnBytes = new byte[20];
 
-        String selectQuery = "select "+COL_SALT+" from " +USER_TABLE+" where userName = '"+userID+"'";
-
-
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        if(cursor.getCount() == 1)
-        {
-            cursor.moveToFirst();
-            returnBytes = cursor.getBlob(cursor.getColumnIndex(COL_SALT));
-            return returnBytes;
-        }
-        else
-        {
-            return returnBytes;
-        }
-
-    }
-
-    public String getHashedPass(String userID)
-    {
-        SQLiteDatabase db = this.getWritableDatabase();
-        String returnString = "";
-
-        String selectQuery = "select "+COL_PASSWORD+" from " +USER_TABLE+" where userName = '"+userID+"'";
-
-
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        if(cursor.getCount() == 1)
-        {
-            cursor.moveToFirst();
-            returnString = cursor.getString(cursor.getColumnIndex(COL_PASSWORD));
-            return returnString;
-        }
-        else
-        {
-            return returnString;
-        }
-
-    }
 
 
 
