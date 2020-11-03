@@ -1,12 +1,21 @@
 package com.example.faceoff3;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
@@ -39,6 +48,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 
+import androidx.annotation.DrawableRes;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -123,13 +133,9 @@ public class MapsActivity extends FragmentActivity {
     }
 
     private class DownloadCountyGeoJsonFile extends AsyncTask<String, Void, GeoJsonLayer> {
-
-
         @Override
         protected GeoJsonLayer doInBackground(String... params) {
-
             try {
-
                 // Open a stream from the URL
                 InputStream stream = new URL(params[0]).openStream();
 
@@ -175,6 +181,18 @@ public class MapsActivity extends FragmentActivity {
         }
     }
 
+//    line = countyCodeMap.get(countyCode);
+//    line = "{\n" +
+//            "\"type\": \"FeatureCollection\",\n" +
+//            "\"features\": [\n" + line + "]\n" +
+//            "}\n";                                // make the single line match a valid GeoJSON file
+//
+//    // Close the stream
+//                reader.close();
+//                stream.close();
+//
+//                return new GeoJsonLayer(mMap, new JSONObject(line));
+
     private void addGeoJsonLayerToMap(GeoJsonLayer layer) {
 
         addColorsToMarkers(layer);
@@ -216,28 +234,42 @@ public class MapsActivity extends FragmentActivity {
     }
 
     /**
-     * Adds a point style to all features to change the color of the marker based on its magnitude
-     * property
+     * Puts a COVID pointIcon (marker) in every US county based on each county's latest/current incidence rate
      */
     private void addColorsToMarkers(GeoJsonLayer layer) {
+        BitmapDescriptor pointIcon;
+        BitmapDescriptor pointIconYellow = BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(R.drawable.ic_coronavirus_yellow));
+        BitmapDescriptor pointIconOrange = BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(R.drawable.ic_coronavirus_orange));
+        BitmapDescriptor pointIconDarkOrange = BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(R.drawable.ic_coronavirus_dark_orange));
+        BitmapDescriptor pointIconRed = BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(R.drawable.ic_coronavirus_red));
+
         // Iterate over all the features stored in the layer
         for (GeoJsonFeature feature : layer.getFeatures()) {
             // Check if the magnitude property exists
             if (feature.getProperty("Incident_Rate") != null && feature.hasProperty("Admin2")) {
                 double magnitude = Double.parseDouble(feature.getProperty("Incident_Rate"));
 
-                // Get the icon for the feature
-                BitmapDescriptor pointIcon = BitmapDescriptorFactory
-                        .defaultMarker(magnitudeToColor(magnitude));
+                /**
+                 * Now assign a color based on the given magnitude
+                 */
+                if (magnitude < 500) {         // meaning less than 500 in 100,000 people, or fewer than 1 in 200 people or up to 0.5% of people
+                    pointIcon = pointIconYellow;
+                } else if (magnitude < 1000) { // meaning less than 1,000 in 100,000 people, or up to 1 in 100 people or up to 1% of people
+                    pointIcon = pointIconOrange;
+                } else if (magnitude < 3333) { // meaning less than 3,333 in 100,000 people, or up to 1 in 30 people or up to 3.3% of people
+                    pointIcon = pointIconDarkOrange;
+                } else {                       //meaning anything greater than 3,333 in 100,000 people, or at least 1 in 30 people or >=3.3% of people
+                    pointIcon = pointIconRed;
+                }
 
                 // Create a new point style
                 GeoJsonPointStyle pointStyle = new GeoJsonPointStyle();
 
                 // Set options for the point style
                 pointStyle.setIcon(pointIcon);
-                pointStyle.setTitle("1 in " + Math.round(100000 / magnitude) + " people");
+                pointStyle.setTitle("1 in " + Math.round(100000 / magnitude) + " people are known positive");
                 pointStyle.setSnippet("COVID-19 incidence rate in " + feature.getProperty("Admin2") + " County, " + feature.getProperty("Province_State"));
-                pointStyle.setAlpha((float) 0.6);
+//                pointStyle.setAlpha((float) 0.6); // pointIcon transparency
 
                 // Assign the point style to the feature
                 feature.setPointStyle(pointStyle);
@@ -245,21 +277,27 @@ public class MapsActivity extends FragmentActivity {
         }
     }
 
-    /**
-     * Assigns a color based on the given magnitude
-     */
-    private static float magnitudeToColor(double magnitude) {
-        if (magnitude < 2000) {
-            return BitmapDescriptorFactory.HUE_YELLOW;
-        } else if (magnitude < 4000) {
-            return BitmapDescriptorFactory.HUE_ORANGE;
-        } else if (magnitude < 6000) {
-            return BitmapDescriptorFactory.HUE_RED;
-        } else {
-            return BitmapDescriptorFactory.HUE_VIOLET;
-        }
-    }
 
+    /* turn the coronavirus png that Android Studio has in image assets into a bitmap (as required
+    for later use as a color-coded point marker for each US county) */
+    private Bitmap getMarkerBitmapFromView(@DrawableRes int resId) {
+
+        View customMarkerView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.view_custom_marker, null);
+        ImageView markerImageView = (ImageView) customMarkerView.findViewById(R.id.profile_image);
+        markerImageView.setImageResource(resId);
+        customMarkerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        customMarkerView.layout(0, 0, customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight());
+        customMarkerView.buildDrawingCache();
+        Bitmap returnedBitmap = Bitmap.createBitmap(customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(returnedBitmap);
+        canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN);
+        Drawable drawable = customMarkerView.getBackground();
+        if (drawable != null)
+            drawable.draw(canvas);
+        customMarkerView.draw(canvas);
+        return returnedBitmap;
+    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -274,6 +312,9 @@ public class MapsActivity extends FragmentActivity {
             public void onMapReady(GoogleMap googleMap) {
                 /* when map is loaded */
                 mMap = googleMap;
+                mMap.setPadding(0,220, 0, 0);
+                mMap.getUiSettings().setZoomControlsEnabled(true);
+
 
                 /* get latest COVID-19 data */
                 retrieveCovidFileFromUrl();
@@ -290,8 +331,8 @@ public class MapsActivity extends FragmentActivity {
 
 
                 LatLngBounds coloradoBounds = new LatLngBounds(
-                        new LatLng(37.30, -109.00), // SW bounds
-                        new LatLng(41.83, -100.99)  // NE bounds
+                        new LatLng(37.17, -109.10), // SW bounds
+                        new LatLng(41.70, -101.09)  // NE bounds
                 );
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coloradoBounds.getCenter(), 8));
 
@@ -311,6 +352,7 @@ public class MapsActivity extends FragmentActivity {
                 } catch (IOException e) {
                 } catch (JSONException e) {
                 }*/
+
                 mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng latLng) {
@@ -338,69 +380,47 @@ public class MapsActivity extends FragmentActivity {
             }
         });
 
-            String apiKey = getString(R.string.api_key);
+        String apiKey = getString(R.string.api_key);
 
-            if(!Places.isInitialized()){
-                Places.initialize(getApplicationContext(), apiKey);
+        if(!Places.isInitialized()){
+            Places.initialize(getApplicationContext(), apiKey);
+        }
+
+        PlacesClient placesClient = Places.createClient(getApplicationContext());
+
+        // Initialize the AutocompleteSupportFragment.
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+
+
+        autocompleteFragment.setLocationBias(RectangularBounds.newInstance(
+                new LatLng(37.20, -109.00), // SW bounds
+                new LatLng(41.73, -100.99)  // NE bounds
+        ));
+
+        autocompleteFragment.setCountries("US");
+
+        // Specify the types of place data to return.
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+
+        // Set up a PlaceSelectionListener to handle the response.
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NotNull Place place) {
+                // TODO: Get info about the selected place.
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(place.getLatLng().latitude, place.getLatLng().longitude), 10));    // TODO: why doesn't this work?
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
             }
 
-            PlacesClient placesClient = Places.createClient(getApplicationContext());
 
-            // Initialize the AutocompleteSupportFragment.
-            AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
-                    getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-
-
-            autocompleteFragment.setLocationBias(RectangularBounds.newInstance(
-                    new LatLng(37.20, -109.00), // SW bounds
-                    new LatLng(41.73, -100.99)  // NE bounds
-            ));
-
-            autocompleteFragment.setCountries("US");
-
-            // Specify the types of place data to return.
-    autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
-
-            // Set up a PlaceSelectionListener to handle the response.
-    autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-                @Override
-                public void onPlaceSelected(@NotNull Place place) {
-                    // TODO: Get info about the selected place.
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 10));    // TODO: why doesn't this work? also, the new autocomplete search bar is hiding the myLocation button
-                    Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
-                }
-
-
-                @Override
-                public void onError(@NotNull Status status) {
-                    // TODO: Handle the error.
-                    Log.i(TAG, "An error occurred: " + status);
-                }
-            });
-
-
-
-
-
+            @Override
+            public void onError(@NotNull Status status) {
+                // TODO: Handle the error.
+                Log.i(TAG, "An error occurred: " + status);
+            }
+        });
     }
 }
-
-
-
-/*    private void setCameraView(){
-        double bottomBoundary = mUserPosition.getLatitude() - .1;
-        double leftBoundary = mUserPosition.getLongitude() - .1;
-        double topBoundary = mUserPosition.getLatitude() + .1;
-        double rightBoundary = mUserPosition.getLongitude() + .1;
-
-        mMapBoundary = new LatLngBounds(
-                new LatLng(bottomBoundary, leftBoundary),
-                new LatLng(topBoundary, rightBoundary)
-        );
-
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mMapBoundary, 10));
-    }*/
 
     //protected GoogleMap getMap() {
       //  return mMap;
