@@ -10,6 +10,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -22,14 +23,22 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Dash;
+import com.google.android.gms.maps.model.Dot;
+import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.maps.android.collections.GroundOverlayManager;
+import com.google.maps.android.collections.MarkerManager;
+import com.google.maps.android.collections.PolygonManager;
+import com.google.maps.android.collections.PolylineManager;
 import com.google.maps.android.data.Feature;
 import com.google.maps.android.data.geojson.GeoJsonFeature;
 import com.google.maps.android.data.geojson.GeoJsonLayer;
@@ -47,8 +56,11 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import androidx.annotation.DrawableRes;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -57,17 +69,21 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.data.geojson.GeoJsonPolygonStyle;
 
 
 public class MapsActivity extends FragmentActivity {
     private static final String TAG = "MapsActivity";
     private GoogleMap mMap;
     private final static String mLogTag = "GeoJsonLayers";
-    public String countyCode = "";
     public GeoJsonLayer layer2;
     public HashMap<String, String> countyCodeMap = new HashMap<>();
     private LatLngBounds mMapBoundary;
     private Location mUserPosition;
+    public MarkerManager markerManager;
+    public GroundOverlayManager groundOverlayManager;
+    public PolygonManager polygonManager;
+    public PolylineManager polylineManager;
 
 
     /* this function pulls the county polygons from the 2010 Census GeoJSON on-device resource */
@@ -115,7 +131,7 @@ public class MapsActivity extends FragmentActivity {
                 reader.close();
                 stream.close();
 
-                return new GeoJsonLayer(mMap, new JSONObject(result.toString()));
+                return new GeoJsonLayer(mMap, new JSONObject(result.toString()), markerManager, polygonManager, polylineManager, groundOverlayManager);
             } catch (IOException e) {
                 Log.e(mLogTag, "GeoJSON file could not be read");
             } catch (JSONException e) {
@@ -136,7 +152,7 @@ public class MapsActivity extends FragmentActivity {
         @Override
         protected GeoJsonLayer doInBackground(String... params) {
             try {
-                // Open a stream from the URL
+                // Open a stream from the URL (which is hosted at https://eric.clst.org/tech/usgeojson/)
                 InputStream stream = new URL(params[0]).openStream();
 
                 String line;
@@ -154,31 +170,35 @@ public class MapsActivity extends FragmentActivity {
                 }
                 // line = line.substring(0, line.length() - 1);  // chop off the last character (a comma)
 
-                line = countyCodeMap.get(countyCode);
-                line = "{\n" +
-                        "\"type\": \"FeatureCollection\",\n" +
-                        "\"features\": [\n" + line + "]\n" +
-                        "}\n";                                // make the single line match a valid GeoJSON file
-
                 // Close the stream
                 reader.close();
                 stream.close();
 
-                return new GeoJsonLayer(mMap, new JSONObject(line));
             } catch (IOException e) {
                 Log.e(mLogTag, "GeoJSON file could not be read");
-            } catch (JSONException e) {
-                Log.e(mLogTag, "GeoJSON file could not be converted to a JSONObject");
             }
             return null;
         }
 
-        @Override
-        protected void onPostExecute(GeoJsonLayer layer) {
-            if (layer != null) {
-                layer.addLayerToMap();
-            }
+//        @Override
+//        protected void onPostExecute(GeoJsonLayer layer) {
+//            if (layer != null) {
+//                layer.addLayerToMap();
+//            }
+//        }
+    }
+
+    private void drawAndFillCountyBoundary(GeoJsonPolygonStyle geoJsonPolygonStyle, String countyCode) throws JSONException {
+        String line = countyCodeMap.get(countyCode);
+        line = "{\n" +
+                "\"type\": \"FeatureCollection\",\n" +
+                "\"features\": [\n" + line + "}]\n" +
+                "}\n";                                // make the single line match a valid GeoJSON file
+        GeoJsonLayer geoJsonLayer = new GeoJsonLayer(mMap, new JSONObject(line), markerManager, polygonManager, polylineManager, groundOverlayManager);
+        for (GeoJsonFeature feature : geoJsonLayer.getFeatures()){
+            feature.setPolygonStyle(geoJsonPolygonStyle);
         }
+        geoJsonLayer.addLayerToMap();
     }
 
 //    line = countyCodeMap.get(countyCode);
@@ -191,7 +211,8 @@ public class MapsActivity extends FragmentActivity {
 //                reader.close();
 //                stream.close();
 //
-//                return new GeoJsonLayer(mMap, new JSONObject(line));
+//                layer = new GeoJsonLayer(mMap, new JSONObject(line));
+//                layer.addLayerToMap();
 
     private void addGeoJsonLayerToMap(GeoJsonLayer layer) {
 
@@ -200,25 +221,43 @@ public class MapsActivity extends FragmentActivity {
 
         // receiving features via GeoJsonLayer clicks.
         layer.setOnFeatureClickListener(new GeoJsonLayer.GeoJsonOnFeatureClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onFeatureClick(Feature feature) {   // TODO: this is apparently where a problem is that keeps the map from registering more than 1 county-boundary drawing click. What should be expected from this function onFeatureClick?
-                countyCode = feature.getProperty("FIPS");
+                String countyCode = feature.getProperty("FIPS");
+
+                GeoJsonPolygonStyle geoJsonPolygonStyle = new GeoJsonPolygonStyle();
+                List<PatternItem> dotList =  Arrays.asList(new Dash(30), new Gap(20));
+                Color colorTransparentYellow = Color.valueOf(0x80DEDA7A);
+                Color colorTransparentOrange = Color.valueOf(0x80DEA600);
+                Color colorTransparentDarkOrange = Color.valueOf(0x80DE7400);
+                Color colorTransparentRed = Color.valueOf(0x80BF1B00);
+                geoJsonPolygonStyle.setStrokePattern(dotList);
+                geoJsonPolygonStyle.setClickable(true);
 
                 String recommendation = "";
                 /* right now this is the same calculation as below in the magnitudeToColor function,
                  * but in the future we can change it to incorporate the user's current face-touching
                  * to hand-washing ratio, to give a more tailored recommendation to the user */
-                if (Double.parseDouble(feature.getProperty("Incident_Rate")) < 2000) {
+                if (Double.parseDouble(feature.getProperty("Incident_Rate")) < 500) {
                     recommendation = "exercise caution in this area";
-                } else if (Double.parseDouble(feature.getProperty("Incident_Rate")) < 4000) {
+                    geoJsonPolygonStyle.setFillColor(colorTransparentYellow.toArgb());
+                } else if (Double.parseDouble(feature.getProperty("Incident_Rate")) < 1000) {
                     recommendation = "exercise exaggerated caution in this area";
-                } else if (Double.parseDouble(feature.getProperty("Incident_Rate")) < 6000) {
+                    geoJsonPolygonStyle.setFillColor(colorTransparentOrange.toArgb());
+                } else if (Double.parseDouble(feature.getProperty("Incident_Rate")) < 3333) {
                     recommendation = "exercise extreme caution in this area";
+                    geoJsonPolygonStyle.setFillColor(colorTransparentDarkOrange.toArgb());
                 } else {
                     recommendation = "avoid unnecessary travel to or within this area";
+                    geoJsonPolygonStyle.setFillColor(colorTransparentRed.toArgb());
                 }
 
-                retrieveCountyFileFromUrl();
+                try {
+                    drawAndFillCountyBoundary(geoJsonPolygonStyle, countyCode);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
                 Toast.makeText(getApplicationContext(),
                         "Based on your habits, FaceOff recommends that you " + recommendation,
@@ -314,13 +353,20 @@ public class MapsActivity extends FragmentActivity {
                 mMap = googleMap;
                 mMap.setPadding(0,220, 0, 0);
                 mMap.getUiSettings().setZoomControlsEnabled(true);
+           //     mMap.setOnCameraIdleListener();  TODO: not sure if we need this but it's in the demo multilayer activity
 
+
+                markerManager = new MarkerManager(mMap);
+                groundOverlayManager = new GroundOverlayManager(mMap);
+                polygonManager = new PolygonManager(mMap);
+                polylineManager = new PolylineManager(mMap);
 
                 /* get latest COVID-19 data */
                 retrieveCovidFileFromUrl();
 
                 /* get the county polygons from the 2010 Census GeoJSON */
                 //     retrieveFileFromResource();
+                retrieveCountyFileFromUrl();
 
                 if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     return;
@@ -369,11 +415,14 @@ public class MapsActivity extends FragmentActivity {
 
                         /* animating to zoom the marker */
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                                latLng, 10
+                                latLng, 8
 
                         ));
                         /* add marker on map */
-                        mMap.addMarker(markerOptions);
+                        MarkerManager.Collection markerCollection = markerManager.newCollection();
+                        markerCollection.addMarker(markerOptions);
+
+//                                mMap.addMarker(markerOptions);
 
                     }
                 });

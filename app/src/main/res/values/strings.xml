@@ -3,7 +3,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="covid_geojson_url">https://opendata.arcgis.com/datasets/628578697fb24d8ea4c32fa0c5ae1843_0.geojson</string>
-    <string name="county_geojson_url">https://github.com/chansonnier/FaceOff3/raw/master/gz_2010_us_050_00_20m(1).json</string>
+    <string name="county_geojson_url">https://eric.clst.org/assets/wiki/uploads/Stuff/gz_2010_us_050_00_500k.json</string>
     <string name="api_key">AIzaSyDV6V3WcSZmqvZox4M_NrtHMha36r4Lwow</string>
 
 </resources>

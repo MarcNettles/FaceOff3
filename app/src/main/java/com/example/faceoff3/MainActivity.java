@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         /* Here we have to call the functions we create below.*/
         AM_createAccount();
         AM_signIn();
-        getLastKnownLocation();
+//        getLastKnownLocation();
 
 
     }
@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
                 == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
             AM_createAccount();  // continue on to the app
-            getLastKnownLocation();
+//            getLastKnownLocation();
         } else { // this will actually ask the user for permissions
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
@@ -312,7 +312,6 @@ public class MainActivity extends AppCompatActivity {
         if (checkMapServices()){
             if(mLocationPermissionGranted){
                 AM_createAccount();
-                getLastKnownLocation();
             }
             else {
                 getLocationPermission();
@@ -364,7 +363,7 @@ public class MainActivity extends AppCompatActivity {
                             if(isInserted == true)
                             {
                                 Toast.makeText(MainActivity.this, "Account Created", Toast.LENGTH_LONG).show();
-                                getLastKnownLocation();
+//                                getLastKnownLocation();
                                 signIn.onClick(v);
                             }                                               // This code block also signs you in
                             else
@@ -383,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
     public void AM_signIn()
     {
         button_AM_signIn.setOnClickListener(signIn); // Sign In is listening for a click
-        getLastKnownLocation();
+//        getLastKnownLocation();
     }
 
 
