@@ -111,7 +111,7 @@ public class HomeScreenActivity extends AppCompatActivity
                             @Override
                             public void onClick(View v)
                             {
-                                Intent intent = new Intent(HomeScreenActivity.this, MapActivity.class);
+                                Intent intent = new Intent(HomeScreenActivity.this, MapsActivity.class);
                                 startActivity(intent);
                             }
                         }
