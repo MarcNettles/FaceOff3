@@ -2,6 +2,7 @@ package com.example.faceoff3;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -86,6 +87,10 @@ public class HomeScreenActivity extends AppCompatActivity
         textView_AHS_washedHands.setText("You have washed your hands "+MainActivity.washedHands + " times today.");
         //textView_AHS_warnBehaviorBottom.setText("Behavior is " +riskAssessment+".");
 
+
+
+        // Create a scrolling text field
+        textView_AHS_randomTip.setMovementMethod(new ScrollingMovementMethod());
         updateRisk();
 
 

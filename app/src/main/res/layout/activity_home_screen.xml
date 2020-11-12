@@ -103,6 +103,7 @@
 
     <TextView
         android:id="@+id/textView_AHS_randomTip"
+        android:scrollbars = "vertical"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="We encourage you the minimize hand-to-face contact, to wash your hands on an hourly basis, and to limit non-essential travel."

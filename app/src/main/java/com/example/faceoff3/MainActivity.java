@@ -14,6 +14,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -46,6 +48,21 @@ public class MainActivity extends AppCompatActivity {
     public static Integer washedHands = 0;
     private boolean mLocationPermissionGranted = false;
     private FusedLocationProviderClient mFusedLocationClient;
+
+
+
+
+    /*SENSOR DATA ATTEMPT*/
+    private SensorManager sensorManager;
+    private Sensor sensor;
+
+
+
+
+
+    //sensorManager = (SensorManager).getSystemService(Context.SENSOR_SERVICE);
+    //sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
 
     private View.OnClickListener signIn = new View.OnClickListener() {
         @Override

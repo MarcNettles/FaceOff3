@@ -1,3 +1,7 @@
+
+/* I created this file just to see if it can be done in a separate java file */
+
+
 package com.example.faceoff3;
 
 import android.hardware.Sensor;
@@ -12,11 +16,11 @@ public class SensorManagementActivity {
 
 
 
-    sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-    sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+    //sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+    //sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
 
 
 
-    
+
 }
