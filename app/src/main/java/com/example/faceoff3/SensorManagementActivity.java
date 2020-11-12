@@ -3,7 +3,7 @@ package com.example.faceoff3;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 
-public class SensorManagement {
+public class SensorManagementActivity {
 
     private SensorManager sensorManager;
     private Sensor sensor;
@@ -14,6 +14,9 @@ public class SensorManagement {
 
     sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
     sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+
+
 
     
 }
