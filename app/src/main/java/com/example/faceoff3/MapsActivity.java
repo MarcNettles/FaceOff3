@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.PatternItem;
+import com.google.android.gms.maps.model.Polygon;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.RectangularBounds;
@@ -78,6 +79,7 @@ public class MapsActivity extends FragmentActivity {
     private final static String mLogTag = "GeoJsonLayers";
     public GeoJsonLayer layer2;
     public HashMap<String, String> countyCodeMap = new HashMap<>();
+    public HashMap<String, Boolean> countyFilledIn = new HashMap<>();
     private LatLngBounds mMapBoundary;
     private Location mUserPosition;
     public MarkerManager markerManager;
@@ -166,6 +168,7 @@ public class MapsActivity extends FragmentActivity {
                     if (line.contains("0500000US")) { // find the county code in the county geojson
                         keyString = line.substring((line.indexOf("0500000US") + 9), (line.indexOf("0500000US") + 14));  // this should grab the 5 numbers right after the indexed "0500000US" portion of the string
                         countyCodeMap.put(keyString, line.substring(0, line.length() - 1)); // put this key value pair in the hashMap countyCodeMap, chopping the last comma off each line beforehand
+                        countyFilledIn.put(keyString, false); // initializing all counties as 'false', i.e., not colored in yet on the map
                     }
                 }
                 // line = line.substring(0, line.length() - 1);  // chop off the last character (a comma)
@@ -198,7 +201,10 @@ public class MapsActivity extends FragmentActivity {
         for (GeoJsonFeature feature : geoJsonLayer.getFeatures()){
             feature.setPolygonStyle(geoJsonPolygonStyle);
         }
-        geoJsonLayer.addLayerToMap();
+        if (countyFilledIn.get(countyCode) == false) {
+            geoJsonLayer.addLayerToMap();  // to avoid 'darkening' counties by adding multiple color fill layers when they are clicked multiple times
+            countyFilledIn.put(countyCode, true); // mark this county as colored in, so that if clicked again, it won't have another layer of color added
+        }
     }
 
 //    line = countyCodeMap.get(countyCode);
@@ -308,7 +314,7 @@ public class MapsActivity extends FragmentActivity {
                 pointStyle.setIcon(pointIcon);
                 pointStyle.setTitle("1 in " + Math.round(100000 / magnitude) + " people are known positive");
                 pointStyle.setSnippet("COVID-19 incidence rate in " + feature.getProperty("Admin2") + " County, " + feature.getProperty("Province_State"));
-//                pointStyle.setAlpha((float) 0.6); // pointIcon transparency
+                pointStyle.setAlpha((float) 0.8); // pointIcon transparency
 
                 // Assign the point style to the feature
                 feature.setPointStyle(pointStyle);
@@ -421,6 +427,15 @@ public class MapsActivity extends FragmentActivity {
                         /* add marker on map */
                         MarkerManager.Collection markerCollection = markerManager.newCollection();
                         markerCollection.addMarker(markerOptions);
+
+                        // Add a listener for polygon clicks that changes the clicked polygon's stroke color.
+                        mMap.setOnPolygonClickListener(new GoogleMap.OnPolygonClickListener() {
+                            @Override
+                            public void onPolygonClick(Polygon polygon) {
+                                // Flip the red, green and blue components of the polygon's stroke color.
+                                polygon.setFillColor(polygon.getFillColor() ^ polygon.getFillColor()); // XOR to toggle whatever color is there off
+                            }
+                        });
 
 //                                mMap.addMarker(markerOptions);
 
