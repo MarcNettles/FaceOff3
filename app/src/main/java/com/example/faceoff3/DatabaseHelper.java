@@ -32,6 +32,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     public static final String COL_FTOUCHES = "fTouches";
     public static final String COL_WASHEDHANDS_DAILYCOUNT = "washedHandsDailyCount";
     public static final String COL_WASHEDHANDS_MONTHLYCOUNT = "washedHandsMonthlyCount";
+    public static final String COL_SALT = "salt";
     //public static final String;
 
     /*Table informativeTips: columns*/
@@ -49,11 +50,11 @@ public class DatabaseHelper extends SQLiteOpenHelper
     @Override
     public void onCreate(SQLiteDatabase db)
     {
-        db.execSQL("create table " + USER_TABLE + " (userName text primary key, password text, firstName text, lastName text, fTouches integer)");
 
         /*Informative Tab: tip table creation*/
-        db.execSQL("create table "+ INFORMATIVE_TIPS + " (id integer primary key, tip text)");
+        db.execSQL("create table "+ INFORMATIVE_TIPS + " (id primary key AUTOINCREMENT, tip text)");
 
+        db.execSQL("create table " + USER_TABLE + " (userName text primary key, password text, firstName text, lastName text, fTouches integer, salt blob)");
         /* This doesn't work, I'm not sure why yet */
         //fillTipTable(INFORMATIVE_TIPS);
     }
@@ -69,11 +70,11 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
 
     /*
-    *
-    * Here are the important functions so far. InsertData() is used to create new users. DO NOT USE for updating fTouches, use the updateData()!!! Thank you :)
-    *
-    * */
-    public boolean insertData(String userName, String password, String firstName, String lastName, Integer fTouches)
+     *
+     * Here are the important functions so far. InsertData() is used to create new users. DO NOT USE for updating fTouches, use the updateData()!!! Thank you :)
+     *
+     * */
+    public boolean insertData(String userName, String password, String firstName, String lastName, Integer fTouches, byte[] salt)
     {
         SQLiteDatabase db = this.getWritableDatabase(); // or we could use .getReadableDatabase(); which is used in case the database isn't currently writeable.
         ContentValues contentValues = new ContentValues(); // We use the content values to .put() the data we want to insert into the right columns.
@@ -84,6 +85,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
         contentValues.put(COL_FIRSTNAME, firstName);
         contentValues.put(COL_LASTNAME, lastName);
         contentValues.put(COL_FTOUCHES, fTouches);
+        contentValues.put(COL_SALT, salt);
 
         long result = db.insert(USER_TABLE, null, contentValues); // Either the data is insert or it is not, db.insert() returns -1 if it did not insert successfully, otherwise it returns how many rows were affected.
 
@@ -110,95 +112,92 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
 
         /* Here we hard code the tips to pull from */
-        contentValues.put(COL_IT_ID, 1);
+
         contentValues.put(COL_IT_TIP, "Wear a mask. Save lives.");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 2);
+
         contentValues.put(COL_IT_TIP, "Wash your hands with soap and water for at least 20 seconds");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 3);
+
         contentValues.put(COL_IT_TIP, "Water alone is not enough! To prevent spread of the virus, you must use soap as well!");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 4);
+
         contentValues.put(COL_IT_TIP, "Sanitizer should be at least 60% alcohol.");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 5);
+
         contentValues.put(COL_IT_TIP, "Cough into your elbow to reduce the spray of germs.");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 6);
         contentValues.put(COL_IT_TIP, "Wear masks with two or more layers.");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 7);
+
         contentValues.put(COL_IT_TIP, "Masks need to cover your nose and mouth, secured under your chin.");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 8);
+
         contentValues.put(COL_IT_TIP, "Masks with breathing valves are a no go!");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 9);
+
         contentValues.put(COL_IT_TIP, "Do not put masks on children younger than 2 years old.");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 10);
         contentValues.put(COL_IT_TIP, "Avoid touching your face with unwashed hands!");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 11);
+
         contentValues.put(COL_IT_TIP, "Clean and disinfect frequently touched surfaces daily.");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 12);
+
         contentValues.put(COL_IT_TIP, "Wear gloves when disinfecting. Chemicals can enter your bloodstream through the skin.");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 13);
+
         contentValues.put(COL_IT_TIP, "Maintain 6 feet of distance from others at all times.");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 14);
+
         contentValues.put(COL_IT_TIP, "Constant handwashing can lead to dry skin. Try using a soap with a moisturizer, such as Dove.");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 15);
         contentValues.put(COL_IT_TIP, "If someone in the house is sick, make sure they use a separate bathroom.");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 16);
+
         contentValues.put(COL_IT_TIP, "Replace your HVAC filter regularly.");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 17);
+
         contentValues.put(COL_IT_TIP, "HVAC systems only filter when on, so turn on the system fan without heating or cooling for longer times.");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 18);
+
         contentValues.put(COL_IT_TIP, "Stay up to date by visiting www.cdc.gov/coronavirus");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 19);
+
         contentValues.put(COL_IT_TIP, "If you are sick, stay home!");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 20);
+
         contentValues.put(COL_IT_TIP, "If you are sick, stay hydrated!");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 21);
+
         contentValues.put(COL_IT_TIP, "You don’t have to go to the hospital to be seen. Many doctors are using online consultations to keep people safely away from hospitals filled with coronavirus patients.");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 22);
+
         contentValues.put(COL_IT_TIP, "Coronavirus symptoms include fever, chills, cough, shortness of breath, and many more. Visit the CDC’s website for a full list.");
         db.insert(tableName, null, contentValues);
 
-        contentValues.put(COL_IT_ID, 23);
+
         contentValues.put(COL_IT_TIP, "Seek IMMEDIATE medical attention if you experience: Trouble breathing, persistent chest pain, confusion, inability to stay awake, or bluish lips/face.");
 
         long result = db.insert(tableName, null, contentValues);
@@ -234,14 +233,14 @@ public class DatabaseHelper extends SQLiteOpenHelper
     }
 
 
-/*The way I wrote this, it should prevent needing to input all the arguments.
-* If you don't put in an argument, it just isn't added to the list of contentValues.
-*
-*  It NEEDS a userName
-*
-* userName should eventually be replaced with the global variable for the user name, since the user will be signed in.
-*
-* */
+    /*The way I wrote this, it should prevent needing to input all the arguments.
+     * If you don't put in an argument, it just isn't added to the list of contentValues.
+     *
+     *  It NEEDS a userName
+     *
+     * userName should eventually be replaced with the global variable for the user name, since the user will be signed in.
+     *
+     * */
     public boolean updateData(String userName, String password, String firstName, String lastName, Integer fTouches)
     {
 
@@ -366,20 +365,64 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
     }
 
+    public byte[] getSalt(String userID)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        byte[] returnBytes = new byte[20];
 
+        String selectQuery = "select "+COL_SALT+" from " +USER_TABLE+" where userName = '"+userID+"'";
+
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if(cursor.getCount() == 1)
+        {
+            cursor.moveToFirst();
+            returnBytes = cursor.getBlob(cursor.getColumnIndex(COL_SALT));
+            return returnBytes;
+        }
+        else
+        {
+            return returnBytes;
+        }
+
+    }
+
+    public String getHashedPass(String userID)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String returnString = "";
+
+        String selectQuery = "select "+COL_PASSWORD+" from " +USER_TABLE+" where userName = '"+userID+"'";
+
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if(cursor.getCount() == 1)
+        {
+            cursor.moveToFirst();
+            returnString = cursor.getString(cursor.getColumnIndex(COL_PASSWORD));
+            return returnString;
+        }
+        else
+        {
+            return returnString;
+        }
+
+    }
 
 
 
 
 
     /*These are just some extra helper functions to be used as needed
-    *
-    *
-    *
-    *
-    *
-    *
-    * In case we need to pull a whole table*/
+     *
+     *
+     *
+     *
+     *
+     *
+     * In case we need to pull a whole table*/
     /*
     public Cursor getAllData()
     {

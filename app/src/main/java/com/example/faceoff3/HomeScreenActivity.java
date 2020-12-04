@@ -23,7 +23,7 @@ public class HomeScreenActivity extends AppCompatActivity
 
 
 
-    ImageButton imageButton_AHS_informativeTab, imageButton_AHS_settings, imageButton_AHS_increaseWashedHands, imageButton_AHS_maps, imageButton_AHS_decreaseWashedHands;
+    ImageButton imageButton_AHS_informativeTab, imageButton_AHS_settings, imageButton_AHS_increaseWashedHands, imageButton_AHS_maps;
 
 
 
@@ -68,7 +68,6 @@ public class HomeScreenActivity extends AppCompatActivity
         imageButton_AHS_informativeTab = (ImageButton)findViewById(R.id.imageButton_AS_informativeTab);
         imageButton_AHS_settings = (ImageButton)findViewById(R.id.imageButton_AHS_settings);
         imageButton_AHS_increaseWashedHands = (ImageButton)findViewById(R.id.button_AHS_increaseWashedHands);
-        imageButton_AHS_decreaseWashedHands = (ImageButton)findViewById(R.id.button_AHS_decreaseWashedHands);
         imageButton_AHS_maps = (ImageButton)findViewById(R.id.imageButton_AHS_maps);
 
 
@@ -94,7 +93,6 @@ public class HomeScreenActivity extends AppCompatActivity
 
 
         increaseWashedHands();
-        decreaseWashedHands();
 
 
 
@@ -168,20 +166,6 @@ public class HomeScreenActivity extends AppCompatActivity
                                 MainActivity.washedHands = MainActivity.washedHands + 1;
                                 textView_AHS_washedHands.setText("You have washed your hands "+MainActivity.washedHands + " times today.");
                                 updateRisk();
-                            }
-                        }
-                );
-    }
-
-    public void decreaseWashedHands()
-    {
-        imageButton_AHS_decreaseWashedHands.setOnClickListener
-                (
-                        new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                MainActivity.washedHands = MainActivity.washedHands -1;
-                                textView_AHS_washedHands.setText("You have washed your hands " + MainActivity.washedHands + " times today.");
                             }
                         }
                 );

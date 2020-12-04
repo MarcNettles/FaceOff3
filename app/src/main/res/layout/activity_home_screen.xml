@@ -195,20 +195,4 @@
         app:layout_constraintVertical_bias="0.433"
         app:srcCompat="@drawable/map" />
 
-    <ImageButton
-        android:id="@+id/button_AHS_decreaseWashedHands"
-        android:layout_width="52dp"
-        android:layout_height="44dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="56dp"
-        android:layout_marginBottom="21dp"
-        android:padding="1dp"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toTopOf="@+id/textView_AHS_leftHome"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/button_AHS_increaseWashedHands"
-        app:layout_constraintTop_toBottomOf="@+id/textView_AHS_washedHands"
-        app:srcCompat="@android:drawable/presence_busy" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
