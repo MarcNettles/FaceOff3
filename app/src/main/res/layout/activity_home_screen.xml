@@ -143,9 +143,9 @@
         android:layout_width="56dp"
         android:layout_height="41dp"
         android:layout_marginStart="51dp"
-        android:src="@drawable/greenplus"
-        android:scaleType="fitCenter"
         android:padding="1dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/greenplus"
         android:text="Washed Hands!"
         app:layout_constraintBottom_toTopOf="@+id/textView_AHS_leftHome"
         app:layout_constraintEnd_toEndOf="parent"
@@ -225,5 +225,22 @@
         app:layout_constraintStart_toEndOf="@+id/imageView_AHS_imgFacePalm"
         app:layout_constraintTop_toBottomOf="@+id/textView_AHS_touchedFace"
         app:srcCompat="@drawable/greenplus" />
+
+    <ImageButton
+        android:id="@+id/imageButton_AHS_decreaseWashHands"
+        android:layout_width="52dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="82dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginBottom="11dp"
+        android:padding="1dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/textView_AHS_leftHome"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/button_AHS_increaseWashedHands"
+        app:layout_constraintTop_toTopOf="@+id/textView_AHS_washedHands"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@android:drawable/presence_busy" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

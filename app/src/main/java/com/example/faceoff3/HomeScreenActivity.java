@@ -23,11 +23,11 @@ public class HomeScreenActivity extends AppCompatActivity
 
 
 
-    ImageButton imageButton_AHS_informativeTab, imageButton_AHS_settings, imageButton_AHS_increaseWashedHands, imageButton_AHS_maps;
+    ImageButton imageButton_AHS_informativeTab, imageButton_AHS_settings, imageButton_AHS_increaseWashedHands, imageButton_AHS_maps, imageButton_AHS_decreaseWashHands, imageButton_AHS_increaseFaceTouches;
 
 
 
-    ImageView imageView_AHS_imgFaceOff;
+    ImageView imageView_AHS_imgFaceOff, imageView_AHS_tamagochi;
 
 
 
@@ -68,9 +68,11 @@ public class HomeScreenActivity extends AppCompatActivity
         imageButton_AHS_informativeTab = (ImageButton)findViewById(R.id.imageButton_AS_informativeTab);
         imageButton_AHS_settings = (ImageButton)findViewById(R.id.imageButton_AHS_settings);
         imageButton_AHS_increaseWashedHands = (ImageButton)findViewById(R.id.button_AHS_increaseWashedHands);
+
+        imageButton_AHS_decreaseWashHands = (ImageButton)findViewById(R.id.imageButton_AHS_decreaseWashHands);
         imageButton_AHS_maps = (ImageButton)findViewById(R.id.imageButton_AHS_maps);
 
-
+        imageButton_AHS_increaseFaceTouches = (ImageButton)findViewById(R.id.imageButton_AHS_increaseFaceTouches);
 
         imageView_AHS_imgFaceOff = (ImageView)findViewById(R.id.imageView_AHS_imgFaceOff);
 
@@ -83,7 +85,7 @@ public class HomeScreenActivity extends AppCompatActivity
         textView_AHS_touchedFace.setText("You have touched your face "+myDB.getfTouches(MainActivity.currentActiveUser).toString()+" times today.");
         textView_AHS_washedHands.setText("You have washed your hands "+MainActivity.washedHands + " times today.");
         //textView_AHS_warnBehaviorBottom.setText("Behavior is " +riskAssessment+".");
-
+        imageView_AHS_tamagochi = (ImageView)findViewById(R.id.imageView_AHS_tamagochi);
         updateRisk();
 
 
@@ -93,7 +95,8 @@ public class HomeScreenActivity extends AppCompatActivity
 
 
         increaseWashedHands();
-
+        decreaseWashHands();
+        increaseFaceTouches();
 
 
     }
@@ -108,7 +111,7 @@ public class HomeScreenActivity extends AppCompatActivity
                             @Override
                             public void onClick(View v)
                             {
-                                Intent intent = new Intent(HomeScreenActivity.this, MapActivity.class);
+                                Intent intent = new Intent(HomeScreenActivity.this, MapsActivity.class);
                                 startActivity(intent);
                             }
                         }
@@ -124,14 +127,17 @@ public class HomeScreenActivity extends AppCompatActivity
         if(((double)MainActivity.fTouches.intValue() / (double)MainActivity.washedHands.intValue()) > 2 )
         {
             riskAssessment = "Risky";
+            imageView_AHS_tamagochi.setImageResource(R.drawable.sad_cell);
         }
         else if(((double)MainActivity.fTouches.intValue() /(double) MainActivity.washedHands.intValue()) > 1 && (((double)MainActivity.fTouches.intValue() / (double)MainActivity.washedHands.intValue()) <= 2 ) )
         {
             riskAssessment = "Moderately Risky";
+            imageView_AHS_tamagochi.setImageResource(R.drawable.indif_cell);
         }
         else
         {
             riskAssessment = "Safe";
+            imageView_AHS_tamagochi.setImageResource(R.drawable.happy_cell);
         }
 
         textView_AHS_warnBehaviorBottom.setText("Behavior is " +riskAssessment+".");
@@ -153,6 +159,26 @@ public class HomeScreenActivity extends AppCompatActivity
                 );
     }
 
+    public void increaseFaceTouches()
+    {
+        imageButton_AHS_increaseFaceTouches.setOnClickListener
+                (
+                        new View.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(View v)
+                            {
+                                MainActivity.fTouches = MainActivity.fTouches + 1;
+                                textView_AHS_touchedFace.setText("You have touched your face "+MainActivity.fTouches+" times today.");
+                                updateRisk();
+                            }
+                        }
+
+                );
+    }
+
+
+
 
     public void increaseWashedHands()
     {
@@ -170,7 +196,22 @@ public class HomeScreenActivity extends AppCompatActivity
                         }
                 );
     }
-
+    public void decreaseWashHands()
+    {
+        imageButton_AHS_decreaseWashHands.setOnClickListener
+                (
+                        new View.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(View v)
+                            {
+                                MainActivity.washedHands = MainActivity.washedHands - 1;
+                                textView_AHS_washedHands.setText("You have washed your hands "+MainActivity.washedHands + " times today.");
+                                updateRisk();
+                            }
+                        }
+                );
+    }
 
 
     // For now this is tied to a button, but we might want to make it look nicer.
